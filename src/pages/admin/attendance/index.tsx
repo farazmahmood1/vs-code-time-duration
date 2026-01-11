@@ -192,7 +192,7 @@ const Attendance = () => {
           )}
         </div>
       ) : (
-        <AttendanceTable data={data?.data || []} isLoading={isLoading} />
+        <AttendanceTable data={data?.data || []} isLoading={isLoading} selectedDate={date} />
       )}
 
       <CustomPagination

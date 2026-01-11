@@ -11,6 +11,7 @@ import { OnboardingGuard } from "./layout/OnboardingGuard";
 import { PasswordChangeGuard } from "./layout/PasswordChangeGuard";
 import Announcements from "./pages/admin/announcements";
 import Attendance from "./pages/admin/attendance";
+import SessionDetails from "./pages/admin/attendance/SessionDetails";
 import Dashboard from "./pages/admin/dashboard";
 import DepartmentsPage from "./pages/admin/departments";
 import Employees from "./pages/admin/employees";
@@ -89,6 +90,7 @@ const App = () => {
                   <Route path="/employees/:id" element={<EmployeeDetail />} />
                   <Route path="/departments" element={<DepartmentsPage />} />
                   <Route path="/attendance" element={<Attendance />} />
+                  <Route path="/attendance/:id" element={<SessionDetails />} />
                   <Route path="/leaves" element={<Leaves />} />
                   <Route path="/announcements" element={<Announcements />} />
                   <Route path="/projects" element={<ProjectsPage />} />

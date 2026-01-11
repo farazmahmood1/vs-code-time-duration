@@ -3,6 +3,7 @@ import api from "@/lib/axios";
 
 export interface AttendanceRecord {
   id: string;
+  employeeId: string;
   uniqueId?: string;
   employeeName: string;
   department: string | null;

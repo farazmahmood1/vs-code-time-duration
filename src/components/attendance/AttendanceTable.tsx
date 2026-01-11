@@ -2,6 +2,7 @@ import { type AttendanceRecord } from "@/hooks/useAttendanceData";
 import { StatusBadge } from "./StatusBadge";
 import { format } from "date-fns";
 import { formatWorkHours } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -11,13 +12,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 interface AttendanceTableProps {
   data: AttendanceRecord[];
   isLoading: boolean;
+  selectedDate: Date;
 }
 
-export const AttendanceTable = ({ data, isLoading }: AttendanceTableProps) => {
+export const AttendanceTable = ({ data, isLoading, selectedDate }: AttendanceTableProps) => {
+  const navigate = useNavigate();
   // Define status priority order
   const statusPriority = {
     ONLINE: 1,
@@ -120,6 +124,7 @@ export const AttendanceTable = ({ data, isLoading }: AttendanceTableProps) => {
             <TableHead>Check-in</TableHead>
             <TableHead>Check-out</TableHead>
             <TableHead>Work Hours</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -154,6 +159,25 @@ export const AttendanceTable = ({ data, isLoading }: AttendanceTableProps) => {
               </TableCell>
               <TableCell className="text-sm font-medium">
                 {formatWorkHours(Number(record.workHours))}
+              </TableCell>
+              <TableCell>
+                <div className="flex justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() =>
+                      navigate(`/attendance/${record.id}`, {
+                        state: {
+                          employeeId: record.employeeId,
+                          date: selectedDate.toISOString(),
+                          employeeName: record.employeeName,
+                        },
+                      })
+                    }
+                  >
+                    View
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}

@@ -1,0 +1,29 @@
+# Forrof Tracker - Private Application
+# This is a login-required application and should not be indexed
+
+User-agent: *
+Disallow: /
+
+# Block all search engines from indexing
+User-agent: Googlebot
+Disallow: /
+
+User-agent: Bingbot
+Disallow: /
+
+User-agent: Slurp
+Disallow: /
+
+User-agent: DuckDuckBot
+Disallow: /
+
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: YandexBot
+Disallow: /
+
+# If you create a public landing page in the future, you can allow specific paths:
+# Allow: /landing
+# Allow: /about
+# Allow: /pricing
