@@ -20,7 +20,13 @@ import {
 import { forgetPassword } from "@/lib/auth-client";
 import { useAuthState } from "@/hooks/useAuthState";
 
+import { usePageMetadata } from "@/hooks/usePageMetadata";
+
 const ForgotPassword = () => {
+  usePageMetadata({
+    title: "Forgot Password | Forrof Tracker",
+    description: "Reset your Forrof Tracker password to regain access to your account.",
+  });
   const { loading, setLoading, setError, setSuccess, resetState } =
     useAuthState();
 

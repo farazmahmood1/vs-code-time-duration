@@ -18,7 +18,13 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+import { usePageMetadata } from "@/hooks/usePageMetadata";
+
 const Login = () => {
+  usePageMetadata({
+    title: "Login | Forrof Tracker",
+    description: "Access your Forrof Tracker account to manage time, attendance, and productivity.",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const { loading, setLoading, setError, setSuccess, resetState } =
     useAuthState();

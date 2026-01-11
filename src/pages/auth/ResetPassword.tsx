@@ -21,7 +21,13 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
+import { usePageMetadata } from "@/hooks/usePageMetadata";
+
 const ResetPassword = () => {
+  usePageMetadata({
+    title: "Reset Password | Forrof Tracker",
+    description: "Enter your new password to regain access to your Forrof Tracker account.",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { loading, setLoading, setError, setSuccess, resetState } =

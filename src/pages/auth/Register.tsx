@@ -18,7 +18,13 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
+import { usePageMetadata } from "@/hooks/usePageMetadata";
+
 const Register = () => {
+  usePageMetadata({
+    title: "Register | Forrof Tracker",
+    description: "Create your Forrof Tracker account to start tracking time and managing productivity.",
+  });
   const [showPassword, setShowPassword] = useState(false);
 
   const { loading, setLoading, setError, setSuccess, resetState } =

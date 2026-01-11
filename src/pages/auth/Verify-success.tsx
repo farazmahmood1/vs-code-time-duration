@@ -3,7 +3,13 @@ import { CheckCircle } from "lucide-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { usePageMetadata } from "@/hooks/usePageMetadata";
+
 const VerifySuccess = () => {
+  usePageMetadata({
+    title: "Verification Successful | Forrof Tracker",
+    description: "Your email has been successfully verified. Redirecting you to the dashboard.",
+  });
   const navigate = useNavigate();
 
   useEffect(() => {

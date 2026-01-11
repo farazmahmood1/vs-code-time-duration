@@ -1,29 +1,38 @@
-# Forrof Tracker - Private Application
-# This is a login-required application and should not be indexed
+# Forrof Tracker - Employee Time Tracking & Productivity Management
+Sitemap: https://tracker.forrof.io/sitemap.xml
 
 User-agent: *
-Disallow: /
+# Allow public auth pages
+Allow: /login
+Allow: /register
+Allow: /forgot-password
+Allow: /reset-password
+Allow: /verify-success
 
-# Block all search engines from indexing
+# Disallow internal application paths
+Disallow: /onboarding
+Disallow: /profile
+Disallow: /settings
+Disallow: /employees
+Disallow: /departments
+Disallow: /attendance
+Disallow: /leaves
+Disallow: /announcements
+Disallow: /projects
+Disallow: /api/
+Disallow: /admin/
+
+# Optimization for main search engines
 User-agent: Googlebot
-Disallow: /
+Allow: /
+Disallow: /employees/
+Disallow: /attendance/
+Disallow: /leaves/
+Disallow: /api/
 
 User-agent: Bingbot
-Disallow: /
-
-User-agent: Slurp
-Disallow: /
-
-User-agent: DuckDuckBot
-Disallow: /
-
-User-agent: Baiduspider
-Disallow: /
-
-User-agent: YandexBot
-Disallow: /
-
-# If you create a public landing page in the future, you can allow specific paths:
-# Allow: /landing
-# Allow: /about
-# Allow: /pricing
+Allow: /
+Disallow: /employees/
+Disallow: /attendance/
+Disallow: /leaves/
+Disallow: /api/
