@@ -63,7 +63,7 @@ export const {
   signUp,
   signOut,
   useSession,
-  // forgetPassword,
+  forgetPassword,
   resetPassword,
   verifyEmail,
   changePassword,
