@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import DepartmentSelect from "@/components/common/DepartmentSelect";
 import { useToast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
+import { generateRandomPassword } from "@/lib/utils";
 import {
   employeeFormSchema,
   type EmployeeFormData,
@@ -46,11 +47,12 @@ export function AddEmployeeModal({
 
   async function onSubmit(data: EmployeeFormData) {
     setIsLoading(true);
+    const tempPassword = generateRandomPassword(10);
     try {
       await authClient.admin.createUser({
         name: data.name,
         email: data.email,
-        password: "forrof1234",
+        password: tempPassword,
         data: {
           departmentId: data.departmentId,
         },
@@ -61,7 +63,7 @@ export function AddEmployeeModal({
 
       toast({
         title: "Success",
-        description: "Employee created successfully",
+        description: `Employee created successfully. Temporary password: ${tempPassword}`,
       });
 
       form.reset();
