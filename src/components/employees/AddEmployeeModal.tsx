@@ -55,6 +55,7 @@ export function AddEmployeeModal({
         password: tempPassword,
         data: {
           departmentId: data.departmentId,
+          tempPassword: tempPassword, // Backup for backend hook
         },
       });
 
