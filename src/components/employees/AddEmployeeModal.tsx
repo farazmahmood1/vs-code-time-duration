@@ -49,15 +49,25 @@ export function AddEmployeeModal({
     setIsLoading(true);
     const tempPassword = generateRandomPassword(10);
     try {
-      await authClient.admin.createUser({
-        name: data.name,
-        email: data.email,
-        password: tempPassword,
-        data: {
-          departmentId: data.departmentId,
-          tempPassword: tempPassword, // Backup for backend hook
+      await authClient.admin.createUser(
+        {
+          name: data.name,
+          email: data.email,
+          password: tempPassword,
+          data: {
+            departmentId: data.departmentId,
+            tempPassword: tempPassword, // Backup for backend hook
+          },
         },
-      });
+        {
+          // @ts-expect-error - library types might not explicitly allow fetchOptions here but it passes through
+          fetchOptions: {
+            headers: {
+              "x-temp-password": tempPassword,
+            },
+          },
+        }
+      );
 
       // Invalidate employees query to refetch the list
       queryClient.invalidateQueries({ queryKey: ["employees"] });
