@@ -1,3 +1,4 @@
+
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,8 +8,11 @@ import { useRole } from "./hooks/useRole";
 import AppLayout from "./layout/app-layout";
 import ProtectedRoute from "./layout/app-layout/ProtectedRoute";
 import AuthLayout from "./layout/auth-layout";
+import PublicLayout from "./layout/public-layout";
 import { OnboardingGuard } from "./layout/OnboardingGuard";
 import { PasswordChangeGuard } from "./layout/PasswordChangeGuard";
+
+// Admin Pages
 import Announcements from "./pages/admin/announcements";
 import Attendance from "./pages/admin/attendance";
 import SessionDetails from "./pages/admin/attendance/SessionDetails";
@@ -19,18 +23,34 @@ import EmployeeDetail from "./pages/admin/employees/[id]";
 import Leaves from "./pages/admin/leaves";
 import ProjectsPage from "./pages/admin/projects";
 import Settings from "./pages/admin/settings";
+
+// Auth Pages
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ResetPassword from "./pages/auth/ResetPassword";
 import VerifySuccess from "./pages/auth/Verify-success";
+
+// Employee Pages
 import EmployeeAnnouncements from "./pages/employee/announcements";
 import EmployeeDashboard from "./pages/employee/dashboard";
 import EmployeeLeaves from "./pages/employee/leaves";
+
+// Public Pages
+import Loading from "./pages/Loading";
 import NotFound from "./pages/NotFound";
 import OnboardingPage from "./pages/onboarding";
 import Profile from "./pages/profile";
-import Loading from "./pages/Loading";
+import HomePage from "./pages/public/HomePage";
+import FeaturesPage from "./pages/public/FeaturesPage";
+import PricingPage from "./pages/public/PricingPage";
+import AboutUsPage from "./pages/public/AboutUsPage";
+import SolutionsPage from "./pages/public/SolutionsPage";
+import CareersPage from "./pages/public/CareersPage";
+import SecurityPage from "./pages/public/SecurityPage";
+import PrivacyPolicyPage from "./pages/public/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/public/TermsOfServicePage";
+import CookiePolicyPage from "./pages/public/CookiePolicyPage";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +69,21 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public Routes */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/features" element={<FeaturesPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/about" element={<AboutUsPage />} />
+              <Route path="/solutions" element={<SolutionsPage />} />
+              <Route path="/careers" element={<CareersPage />} />
+              <Route path="/security" element={<SecurityPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsOfServicePage />} />
+              <Route path="/cookies" element={<CookiePolicyPage />} />
+            </Route>
+
+            {/* Auth Routes */}
             <Route element={<AuthLayout />}>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -56,6 +91,10 @@ const App = () => {
               <Route path="/reset-password" element={<ResetPassword />} />
             </Route>
             <Route path="/verify-success" element={<VerifySuccess />} />
+
+            {/* Onboarding - Requires Auth but maybe not full Dashboard wrapper? Keeping as is but updating path if needed? 
+                Usually onboarding is separate. Leaving at /onboarding for now. 
+            */}
             <Route
               path="/onboarding"
               element={
@@ -65,8 +104,9 @@ const App = () => {
               }
             />
 
+            {/* Dashboard Routes (Protected) */}
             <Route
-              path="/"
+              path="/app"
               element={
                 <ProtectedRoute>
                   <PasswordChangeGuard>
@@ -81,33 +121,34 @@ const App = () => {
                 </ProtectedRoute>
               }
             >
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="settings" element={<Settings />} />
               {isAdmin && (
                 <>
                   <Route index element={<Dashboard />} />
-                  <Route path="/employees" element={<Employees />} />
-                  <Route path="/employees/:id" element={<EmployeeDetail />} />
-                  <Route path="/departments" element={<DepartmentsPage />} />
-                  <Route path="/attendance" element={<Attendance />} />
-                  <Route path="/attendance/:id" element={<SessionDetails />} />
-                  <Route path="/leaves" element={<Leaves />} />
-                  <Route path="/announcements" element={<Announcements />} />
-                  <Route path="/projects" element={<ProjectsPage />} />
-                  <Route path="/settings" element={<Settings />} />
+                  <Route path="employees" element={<Employees />} />
+                  <Route path="employees/:id" element={<EmployeeDetail />} />
+                  <Route path="departments" element={<DepartmentsPage />} />
+                  <Route path="attendance" element={<Attendance />} />
+                  <Route path="attendance/:id" element={<SessionDetails />} />
+                  <Route path="leaves" element={<Leaves />} />
+                  <Route path="announcements" element={<Announcements />} />
+                  <Route path="projects" element={<ProjectsPage />} />
+                  {/* Settings is already above */}
                 </>
               )}
               {isEmployee && (
                 <>
                   <Route index element={<EmployeeDashboard />} />
-                  <Route path="/leaves" element={<EmployeeLeaves />} />
+                  <Route path="leaves" element={<EmployeeLeaves />} />
                   <Route
-                    path="/announcements"
+                    path="announcements"
                     element={<EmployeeAnnouncements />}
                   />
                 </>
               )}
             </Route>
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

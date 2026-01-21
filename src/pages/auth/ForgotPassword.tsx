@@ -60,7 +60,7 @@ const ForgotPassword = () => {
             toast.success("Password reset link sent to your email!");
           },
 
-          onError: (ctx) => {
+          onError: (ctx: any) => {
             const message = ctx.error.message || "Failed to send reset link";
 
             toast.error(message);

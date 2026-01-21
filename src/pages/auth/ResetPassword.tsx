@@ -75,7 +75,7 @@ const ResetPassword = () => {
             navigate("/login", { replace: true });
           },
 
-          onError: (ctx) => {
+          onError: (ctx: any) => {
             const message = ctx.error.message || "Failed to reset password";
 
             setError(message);

@@ -59,9 +59,9 @@ const Login = () => {
             setSuccess("Logged in successfully");
             toast.success("Login successful!");
 
-            navigate("/", { replace: true });
+            navigate("/app", { replace: true });
           },
-          onError: (ctx) => {
+          onError: (ctx: any) => {
             if (ctx.error.status === 403) {
               // Check if it's a banned user
               if (ctx.error.code === "BANNED_USER") {

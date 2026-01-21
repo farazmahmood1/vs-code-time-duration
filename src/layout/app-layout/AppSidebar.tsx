@@ -42,49 +42,49 @@ export function AppSidebar() {
 
   const MENU_ITEMS: MenuItem[] = [
     {
-      url: "/",
+      url: "/app",
       icon: LayoutDashboard,
       adminTitle: "Dashboard",
       employeeTitle: "Dashboard",
       roles: ["admin", "employee"],
     },
     {
-      url: "/employees",
+      url: "/app/employees",
       icon: BarChart3,
       adminTitle: "Employees",
       employeeTitle: "Employees",
       roles: ["admin"],
     },
     {
-      url: "/departments",
+      url: "/app/departments",
       icon: Building,
       adminTitle: "Departments",
       employeeTitle: "Departments",
       roles: ["admin"],
     },
     {
-      url: "/projects",
+      url: "/app/projects",
       icon: FolderOpen,
       adminTitle: "Projects",
       employeeTitle: "Projects",
       roles: ["admin"],
     },
     {
-      url: "/attendance",
+      url: "/app/attendance",
       icon: CalendarCheck,
       adminTitle: "Attendance Tracking",
       employeeTitle: "My Attendance",
       roles: ["admin"],
     },
     {
-      url: "/leaves",
+      url: "/app/leaves",
       icon: Briefcase,
       adminTitle: "Leave Management",
       employeeTitle: "My Leaves",
       roles: ["admin", "employee"],
     },
     {
-      url: "/announcements",
+      url: "/app/announcements",
       icon: Calendar,
       adminTitle: "Announcements",
       employeeTitle: "Company Updates",
@@ -92,14 +92,14 @@ export function AppSidebar() {
     },
 
     {
-      url: "/profile",
+      url: "/app/profile",
       icon: User,
       adminTitle: "Profile",
       employeeTitle: "Profile",
       roles: ["employee"],
     },
     {
-      url: "/settings",
+      url: "/app/settings",
       icon: Settings,
       adminTitle: "Settings",
       employeeTitle: "Settings",
@@ -139,18 +139,16 @@ export function AppSidebar() {
                   return (
                     <SidebarMenuItem
                       key={item.url}
-                      className={`my-1 border-l-4 border-transparent ${
-                        isActive ? "border-l-4 border-brand" : ""
-                      }`}
+                      className={`my-1 border-l-4 border-transparent ${isActive ? "border-l-4 border-brand" : ""
+                        }`}
                     >
                       <SidebarMenuButton
                         size="lg"
                         asChild
-                        className={`${
-                          isActive
+                        className={`${isActive
                             ? "bg-blue-50 rounded-none text-brand hover:bg-blue-50 hover:text-brand"
                             : ""
-                        }`}
+                          }`}
                       >
                         <Link to={item.url}>
                           <item.icon className="h-[18px] w-[18px] mr-1" />
