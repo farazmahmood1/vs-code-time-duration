@@ -13,6 +13,7 @@ import {
   type Leave,
 } from "@/hooks/useLeaveData";
 import { Skeleton } from "@/components/ui/skeleton";
+import LeaveBalanceSummary from "@/components/leave/LeaveBalanceSummary";
 
 export default function EmployeeLeaves() {
   const [isApplyDialogOpen, setIsApplyDialogOpen] = useState(false);
@@ -136,6 +137,12 @@ export default function EmployeeLeaves() {
             </div>
           </div>
         </Card>
+      </div>
+
+      {/* Leave Balance Summary */}
+      <div>
+        <h2 className="text-lg font-semibold mb-3">My Leave Balances</h2>
+        <LeaveBalanceSummary />
       </div>
 
       {stats && (

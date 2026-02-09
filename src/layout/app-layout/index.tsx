@@ -4,10 +4,14 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { AppSidebar } from "./AppSidebar";
 import Header from "./Header";
 import { useSession } from "@/lib/auth-client";
+import { useSocketConnection } from "@/hooks/useSocket";
 
 const AppLayout = () => {
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
+
+  // Initialize socket connection when authenticated
+  useSocketConnection();
 
   if (!session) {
     navigate("/login");

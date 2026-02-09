@@ -23,6 +23,14 @@ import EmployeeDetail from "./pages/admin/employees/[id]";
 import Leaves from "./pages/admin/leaves";
 import ProjectsPage from "./pages/admin/projects";
 import Settings from "./pages/admin/settings";
+import ShiftsPage from "./pages/admin/shifts";
+import OvertimePage from "./pages/admin/overtime";
+import AdminTimesheets from "./pages/admin/timesheets";
+import AdminReports from "./pages/admin/reports";
+import AdminReviews from "./pages/admin/reviews";
+import AdminAssets from "./pages/admin/assets";
+import AdminStandups from "./pages/admin/standups";
+import AdminFeedback from "./pages/admin/feedback";
 
 // Auth Pages
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -34,7 +42,14 @@ import VerifySuccess from "./pages/auth/Verify-success";
 // Employee Pages
 import EmployeeAnnouncements from "./pages/employee/announcements";
 import EmployeeDashboard from "./pages/employee/dashboard";
+import EmployeeAttendance from "./pages/employee/attendance";
 import EmployeeLeaves from "./pages/employee/leaves";
+import EmployeeTimesheets from "./pages/employee/timesheets";
+import EmployeeFeedback from "./pages/employee/feedback";
+
+// Shared Pages
+import ChatPage from "./pages/chat";
+import CalendarPage from "./pages/calendar";
 
 // Public Pages
 import Loading from "./pages/Loading";
@@ -123,6 +138,8 @@ const App = () => {
             >
               <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="chat" element={<ChatPage />} />
+              <Route path="calendar" element={<CalendarPage />} />
               {isAdmin && (
                 <>
                   <Route index element={<Dashboard />} />
@@ -134,17 +151,28 @@ const App = () => {
                   <Route path="leaves" element={<Leaves />} />
                   <Route path="announcements" element={<Announcements />} />
                   <Route path="projects" element={<ProjectsPage />} />
+                  <Route path="shifts" element={<ShiftsPage />} />
+                  <Route path="overtime" element={<OvertimePage />} />
+                  <Route path="timesheets" element={<AdminTimesheets />} />
+                  <Route path="reports" element={<AdminReports />} />
+                  <Route path="reviews" element={<AdminReviews />} />
+                  <Route path="assets" element={<AdminAssets />} />
+                  <Route path="standups" element={<AdminStandups />} />
+                  <Route path="feedback" element={<AdminFeedback />} />
                   {/* Settings is already above */}
                 </>
               )}
               {isEmployee && (
                 <>
                   <Route index element={<EmployeeDashboard />} />
+                  <Route path="attendance" element={<EmployeeAttendance />} />
+                  <Route path="timesheets" element={<EmployeeTimesheets />} />
                   <Route path="leaves" element={<EmployeeLeaves />} />
                   <Route
                     path="announcements"
                     element={<EmployeeAnnouncements />}
                   />
+                  <Route path="feedback" element={<EmployeeFeedback />} />
                 </>
               )}
             </Route>

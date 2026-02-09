@@ -1,10 +1,25 @@
-import { ActivityCard } from "@/components/dashboard/ActivityCard";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { DashboardFilters } from "@/components/dashboard/DashboardFilters";
+import { OvertimeAlerts } from "@/components/dashboard/OvertimeAlerts";
+import { RecentAttendance } from "@/components/dashboard/RecentAttendance";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAttendanceData, useAttendanceSummary } from "@/hooks/useAttendanceData";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import { Clock, LogIn, LogOut, Plane, UserMinus, Users } from "lucide-react";
+import { useAdminLeaveStats } from "@/hooks/useLeaveData";
+import { useOvertimeAlerts } from "@/hooks/useOvertime";
+import { useDepartmentComparison } from "@/hooks/useReports";
+import {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  LogIn,
+  LogOut,
+  Plane,
+  Timer,
+  UserMinus,
+  Users,
+} from "lucide-react";
 import { useState } from "react";
 
 const Dashboard = () => {
@@ -13,79 +28,93 @@ const Dashboard = () => {
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
 
-  const filters = {
-    department,
-    project,
-    startDate,
-    endDate,
-  };
+  const filters = { department, project, startDate, endDate };
 
   const { data, isLoading } = useDashboardData(filters);
+  const { data: attendanceSummary } = useAttendanceSummary();
+  const { data: attendanceData } = useAttendanceData({ pageSize: 8 });
+  const { data: leaveStats } = useAdminLeaveStats();
+  const { data: overtimeAlerts } = useOvertimeAlerts();
+  const { data: departmentData } = useDepartmentComparison(
+    startDate || endDate
+      ? {
+          startDate: startDate?.toISOString(),
+          endDate: endDate?.toISOString(),
+        }
+      : undefined
+  );
 
   const statCards = [
     {
       title: "Active Employees",
       value: data?.stats.activeEmployees || 0,
       icon: Users,
-      // trend: { text: "2 new employees added", type: "neutral" as const },
       color: "green" as const,
+      subtitle: "Currently working",
     },
     {
       title: "Inactive Employees",
       value: data?.stats.inactiveEmployees || 0,
       icon: UserMinus,
-      // trend: { text: "+5% Increase than yesterday", type: "up" as const },
-      color: "red" as const,
+      color: "slate" as const,
+      subtitle: "Not clocked in",
     },
-    // {
-    //   title: "Laid Off Employees",
-    //   value: data?.stats.laidOffEmployees || 0,
-    //   icon: UserX,
-    //   trend: { text: "+3% Increase than yesterday", type: "up" as const },
-    //   color: "red-light" as const,
-    // },
     {
-      title: "Total Hours Logged",
+      title: "Hours Logged",
       value: data?.stats.totalHoursLogged || 0,
       icon: Clock,
-      // trend: { text: "-10% Less than yesterday", type: "down" as const },
       color: "blue" as const,
+      subtitle: "Total hours tracked",
     },
-  ];
-
-  const activityCards = [
     {
-      title: "CheckIn Today",
+      title: "Check-Ins Today",
       value: data?.stats.checkInToday || 0,
       icon: LogIn,
-      // trend: { text: "-10% Less than yesterday", type: "down" as const },
-      color: "blue" as const,
+      color: "indigo" as const,
+      subtitle: "Employees checked in",
     },
     {
-      title: "CheckOut Today",
+      title: "Check-Outs Today",
       value: data?.stats.checkOutToday || 0,
       icon: LogOut,
-      // trend: { text: "+3% Increase than yesterday", type: "up" as const },
       color: "orange" as const,
+      subtitle: "Completed for today",
     },
-    // {
-    //   title: "Late CheckIn",
-    //   value: data?.stats.lateCheckIn || 0,
-    //   icon: Moon,
-    //   trend: { text: "-10% Less than yesterday", type: "down" as const },
-    //   color: "yellow" as const,
-    // },
     {
       title: "On Leave",
       value: data?.stats.onLeave || 0,
       icon: Plane,
-      // trend: { text: "2% Increase than yesterday", type: "up" as const },
       color: "purple" as const,
+      subtitle: "Approved leaves",
     },
   ];
 
+  const leaveQuickStats = leaveStats
+    ? [
+        {
+          title: "Approved",
+          value: leaveStats.approved,
+          icon: CheckCircle,
+          color: "emerald" as const,
+        },
+        {
+          title: "Pending Requests",
+          value: leaveStats.pending,
+          icon: Timer,
+          color: "yellow" as const,
+        },
+        {
+          title: "Rejected",
+          value: leaveStats.rejected,
+          icon: AlertTriangle,
+          color: "red" as const,
+        },
+      ]
+    : [];
+
   return (
     <div className="space-y-6">
+      {/* Filters */}
       <DashboardFilters
         department={department}
         project={project}
@@ -99,43 +128,53 @@ const Dashboard = () => {
 
       {isLoading ? (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-32" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} className="h-28" />
             ))}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-32" />
-            ))}
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
-            {[1].map((i) => (
-              <Skeleton key={i} className="h-[400px]" />
-            ))}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Skeleton className="h-[350px] lg:col-span-2" />
+            <Skeleton className="h-[350px]" />
           </div>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {/* Main Stats - 6 cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {statCards.map((card, index) => (
               <StatCard key={index} {...card} />
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {activityCards.map((card, index) => (
-              <ActivityCard key={index} {...card} />
-            ))}
-          </div>
+          {/* Leave Quick Stats - 3 compact cards */}
+          {leaveQuickStats.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {leaveQuickStats.map((card, index) => (
+                <StatCard key={index} {...card} />
+              ))}
+            </div>
+          )}
 
+          {/* Charts Section */}
           {data && (
             <DashboardCharts
               weeklyHoursData={data.weeklyHours}
-              // projectHoursData={data.projectHours}
-              // lateArrivalsData={data.lateArrivals}
+              departmentData={departmentData}
+              leaveStats={leaveStats}
+              attendanceSummary={attendanceSummary}
             />
           )}
+
+          {/* Bottom Section: Overtime Alerts + Recent Attendance */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {overtimeAlerts && overtimeAlerts.length > 0 && (
+              <OvertimeAlerts alerts={overtimeAlerts} />
+            )}
+            {attendanceData && (
+              <RecentAttendance records={attendanceData.data} />
+            )}
+          </div>
         </>
       )}
     </div>

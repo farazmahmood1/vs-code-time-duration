@@ -10,6 +10,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import ImportantLinksTab from "./tabs/ImportantLinksTab";
 import TermsConditionsTab from "./tabs/TermsConditionsTab";
+import LeavePoliciesManager from "@/components/leave/LeavePoliciesManager";
 
 export default function SettingsPage() {
   const { isAdmin } = useRole();
@@ -34,9 +35,10 @@ export default function SettingsPage() {
         onValueChange={setActiveTab}
         className="w-full space-y-6"
       >
-        <TabsList className="grid w-full max-w-xs grid-cols-2 bg-gray-100">
+        <TabsList className="grid w-full max-w-md grid-cols-3 bg-gray-100">
           <TabsTrigger value="links">Important Links</TabsTrigger>
           <TabsTrigger value="terms">Terms & Conditions</TabsTrigger>
+          {isAdmin && <TabsTrigger value="leave-policies">Leave Policies</TabsTrigger>}
         </TabsList>
 
         {/* Important Links Tab */}
@@ -92,6 +94,13 @@ export default function SettingsPage() {
             />
           )}
         </TabsContent>
+
+        {/* Leave Policies Tab (admin only) */}
+        {isAdmin && (
+          <TabsContent value="leave-policies" className="mt-0">
+            <LeavePoliciesManager />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

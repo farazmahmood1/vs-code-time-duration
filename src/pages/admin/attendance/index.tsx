@@ -13,6 +13,9 @@ import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import { format } from "date-fns";
 import { Download, Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DeviationTable from "@/components/attendance/DeviationTable";
+import RegularizationTable from "@/components/attendance/RegularizationTable";
 
 const Attendance = () => {
   const { toast } = useToast();
@@ -109,6 +112,7 @@ const Attendance = () => {
   };
 
   const totalPages = data?.totalPages || 1;
+  const [activeTab, setActiveTab] = useState("attendance");
 
   return (
     <div className="space-y-6">
@@ -134,6 +138,23 @@ const Attendance = () => {
           )}
         </Button>
       </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="attendance">Attendance</TabsTrigger>
+          <TabsTrigger value="deviations">Late / Early</TabsTrigger>
+          <TabsTrigger value="regularizations">Regularization</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="deviations" className="mt-4">
+          <DeviationTable />
+        </TabsContent>
+
+        <TabsContent value="regularizations" className="mt-4">
+          <RegularizationTable />
+        </TabsContent>
+
+        <TabsContent value="attendance" className="mt-4 space-y-6">
 
       <AttendanceFilters
         date={date}
@@ -200,6 +221,9 @@ const Attendance = () => {
         totalPages={totalPages}
         onPageChange={setPage}
       />
+
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

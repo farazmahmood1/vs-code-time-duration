@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/axios";
+import { useSocketQueryInvalidation } from "@/hooks/useSocket";
 
 export interface AttendanceRecord {
   id: string;
@@ -39,6 +40,12 @@ export interface AttendanceFilters {
 }
 
 export const useAttendanceData = (filters: AttendanceFilters) => {
+  // Real-time: refresh attendance when check-in/out/break events occur
+  useSocketQueryInvalidation("attendance:update", [
+    ["attendance"],
+    ["attendance-summary"],
+  ]);
+
   return useQuery<AttendanceData>({
     queryKey: ["attendance", filters],
     queryFn: async () => {

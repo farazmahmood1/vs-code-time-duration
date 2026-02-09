@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/axios";
+import { useSocketQueryInvalidation } from "@/hooks/useSocket";
 
 export interface DashboardFilters {
   department: string;
@@ -23,6 +24,9 @@ interface DashboardData {
 }
 
 export const useDashboardData = (filters: DashboardFilters) => {
+  // Real-time: refresh dashboard when timer/leave events occur
+  useSocketQueryInvalidation("dashboard:statsUpdate", [["dashboard-data"]]);
+
   return useQuery<DashboardData>({
     queryKey: ["dashboard-data", filters],
     queryFn: async () => {

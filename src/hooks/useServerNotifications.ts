@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/axios";
+import { useSocketQueryInvalidation } from "@/hooks/useSocket";
 
 export interface ServerNotification {
   id: string;
@@ -55,6 +56,28 @@ export const useServerNotifications = (
   page: number = 1,
   limit: number = 10
 ) => {
+  // Real-time: invalidate notifications when socket events arrive
+  useSocketQueryInvalidation("notification:new", [
+    [NOTIFICATIONS_KEY],
+    [NOTIFICATIONS_KEY, "unread-count"],
+  ]);
+  useSocketQueryInvalidation("announcement:new", [
+    [NOTIFICATIONS_KEY],
+    [NOTIFICATIONS_KEY, "unread-count"],
+  ]);
+  useSocketQueryInvalidation("leave:statusChanged", [
+    [NOTIFICATIONS_KEY],
+    [NOTIFICATIONS_KEY, "unread-count"],
+  ]);
+  useSocketQueryInvalidation("timer:checkin", [
+    [NOTIFICATIONS_KEY],
+    [NOTIFICATIONS_KEY, "unread-count"],
+  ]);
+  useSocketQueryInvalidation("timer:checkout", [
+    [NOTIFICATIONS_KEY],
+    [NOTIFICATIONS_KEY, "unread-count"],
+  ]);
+
   return useQuery<GetNotificationsResponse>({
     queryKey: [NOTIFICATIONS_KEY, page, limit],
     queryFn: async () => {
@@ -62,15 +85,13 @@ export const useServerNotifications = (
         const { data } = await api.get<GetNotificationsResponse>(
           `/notifications?page=${page}&limit=${limit}`
         );
-        // Unified endpoint now returns all notification types (announcement, leave, check-in/out)
         return data;
       } catch (error) {
         console.error("Error fetching notifications:", error);
         throw error;
       }
     },
-    staleTime: 120000, // 2 minutes
-    refetchInterval: 120000, // Refetch every 2 minutes
+    staleTime: 300000, // 5 minutes (socket handles real-time, this is fallback)
   });
 };
 
@@ -83,8 +104,7 @@ export const useUnreadCount = () => {
       );
       return data;
     },
-    staleTime: 15000, // 15 seconds
-    refetchInterval: 15000, // Refetch every 15 seconds
+    staleTime: 300000, // 5 minutes (socket handles real-time, this is fallback)
   });
 };
 
