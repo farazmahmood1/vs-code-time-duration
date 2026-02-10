@@ -31,6 +31,12 @@ import AdminReviews from "./pages/admin/reviews";
 import AdminAssets from "./pages/admin/assets";
 import AdminStandups from "./pages/admin/standups";
 import AdminFeedback from "./pages/admin/feedback";
+import OrgChartPage from "./pages/admin/org-chart";
+import AdminDocuments from "./pages/admin/documents";
+import AdminCompensation from "./pages/admin/compensation";
+import AdminExpenses from "./pages/admin/expenses";
+import AdminOffboarding from "./pages/admin/offboarding";
+import OffboardingDetail from "./pages/admin/offboarding/[id]";
 
 // Auth Pages
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -46,10 +52,20 @@ import EmployeeAttendance from "./pages/employee/attendance";
 import EmployeeLeaves from "./pages/employee/leaves";
 import EmployeeTimesheets from "./pages/employee/timesheets";
 import EmployeeFeedback from "./pages/employee/feedback";
+import EmployeeShifts from "./pages/employee/shifts";
+import AvailabilityPage from "./pages/employee/availability";
+import EmployeeDocuments from "./pages/employee/documents";
+import EmployeeCompensation from "./pages/employee/compensation";
+import EmployeeExpenses from "./pages/employee/expenses";
 
 // Shared Pages
 import ChatPage from "./pages/chat";
 import CalendarPage from "./pages/calendar";
+import PomodoroPage from "./pages/pomodoro";
+import MoodAnalyticsPage from "./pages/admin/mood";
+import GamificationPage from "./pages/gamification";
+import WellnessPage from "./pages/wellness";
+import IntegrationsPage from "./pages/integrations";
 
 // Public Pages
 import Loading from "./pages/Loading";
@@ -140,6 +156,9 @@ const App = () => {
               <Route path="settings" element={<Settings />} />
               <Route path="chat" element={<ChatPage />} />
               <Route path="calendar" element={<CalendarPage />} />
+              <Route path="pomodoro" element={<PomodoroPage />} />
+              <Route path="leaderboard" element={<GamificationPage />} />
+              <Route path="wellness" element={<WellnessPage />} />
               {isAdmin && (
                 <>
                   <Route index element={<Dashboard />} />
@@ -159,6 +178,14 @@ const App = () => {
                   <Route path="assets" element={<AdminAssets />} />
                   <Route path="standups" element={<AdminStandups />} />
                   <Route path="feedback" element={<AdminFeedback />} />
+                  <Route path="mood-analytics" element={<MoodAnalyticsPage />} />
+                  <Route path="org-chart" element={<OrgChartPage />} />
+                  <Route path="documents" element={<AdminDocuments />} />
+                  <Route path="compensation" element={<AdminCompensation />} />
+                  <Route path="expenses" element={<AdminExpenses />} />
+                  <Route path="offboarding" element={<AdminOffboarding />} />
+                  <Route path="offboarding/:id" element={<OffboardingDetail />} />
+                  <Route path="integrations" element={<IntegrationsPage />} />
                   {/* Settings is already above */}
                 </>
               )}
@@ -173,6 +200,11 @@ const App = () => {
                     element={<EmployeeAnnouncements />}
                   />
                   <Route path="feedback" element={<EmployeeFeedback />} />
+                  <Route path="shifts" element={<EmployeeShifts />} />
+                  <Route path="availability" element={<AvailabilityPage />} />
+                  <Route path="documents" element={<EmployeeDocuments />} />
+                  <Route path="compensation" element={<EmployeeCompensation />} />
+                  <Route path="expenses" element={<EmployeeExpenses />} />
                 </>
               )}
             </Route>

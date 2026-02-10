@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { type AttendanceRecord } from "@/hooks/useAttendanceData";
 import { StatusBadge } from "./StatusBadge";
+import { LocationBadge } from "./LocationBadge";
+import { LocationMapDialog } from "./LocationMapDialog";
 import { format } from "date-fns";
 import { formatWorkHours } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +25,8 @@ interface AttendanceTableProps {
 
 export const AttendanceTable = ({ data, isLoading, selectedDate }: AttendanceTableProps) => {
   const navigate = useNavigate();
+  const [locationDialogOpen, setLocationDialogOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<AttendanceRecord | null>(null);
   // Define status priority order
   const statusPriority = {
     ONLINE: 1,
@@ -50,6 +55,7 @@ export const AttendanceTable = ({ data, isLoading, selectedDate }: AttendanceTab
               <TableHead>Status</TableHead>
               <TableHead>Check-in</TableHead>
               <TableHead>Check-out</TableHead>
+              <TableHead>Location</TableHead>
               <TableHead>Work Hours</TableHead>
             </TableRow>
           </TableHeader>
@@ -73,6 +79,9 @@ export const AttendanceTable = ({ data, isLoading, selectedDate }: AttendanceTab
                 </TableCell>
                 <TableCell>
                   <Skeleton className="h-4 w-20" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-24" />
                 </TableCell>
                 <TableCell>
                   <Skeleton className="h-4 w-16" />
@@ -123,6 +132,7 @@ export const AttendanceTable = ({ data, isLoading, selectedDate }: AttendanceTab
             <TableHead>Status</TableHead>
             <TableHead>Check-in</TableHead>
             <TableHead>Check-out</TableHead>
+            <TableHead>Location</TableHead>
             <TableHead>Work Hours</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -157,6 +167,17 @@ export const AttendanceTable = ({ data, isLoading, selectedDate }: AttendanceTab
                   ? format(new Date(record.checkOutTime), "hh:mm a")
                   : "-"}
               </TableCell>
+              <TableCell>
+                <LocationBadge
+                  location={record.checkInLocation}
+                  onClick={() => {
+                    if (record.checkInLocation || record.checkOutLocation) {
+                      setSelectedRecord(record);
+                      setLocationDialogOpen(true);
+                    }
+                  }}
+                />
+              </TableCell>
               <TableCell className="text-sm font-medium">
                 {formatWorkHours(Number(record.workHours))}
               </TableCell>
@@ -183,6 +204,16 @@ export const AttendanceTable = ({ data, isLoading, selectedDate }: AttendanceTab
           ))}
         </TableBody>
       </Table>
+
+      {selectedRecord && (
+        <LocationMapDialog
+          open={locationDialogOpen}
+          onOpenChange={setLocationDialogOpen}
+          checkInLocation={selectedRecord.checkInLocation}
+          checkOutLocation={selectedRecord.checkOutLocation}
+          employeeName={selectedRecord.employeeName}
+        />
+      )}
     </div>
   );
 };

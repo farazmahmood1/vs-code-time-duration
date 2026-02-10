@@ -112,6 +112,17 @@ export function useSendMessage() {
   });
 }
 
+export const useSearchChatUsers = (query: string) =>
+  useQuery({
+    queryKey: ["chat-users-search", query],
+    queryFn: async () => {
+      const { data } = await api.get(`/chat/users/search?q=${encodeURIComponent(query)}`);
+      return data.data as ChatUser[];
+    },
+    enabled: query.length >= 2,
+    staleTime: 10000,
+  });
+
 export function useMarkAsRead() {
   const qc = useQueryClient();
   return useMutation({

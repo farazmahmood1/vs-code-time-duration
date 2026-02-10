@@ -2,6 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/axios";
 import { useSocketQueryInvalidation } from "@/hooks/useSocket";
 
+export interface LocationPoint {
+  lat: number;
+  lng: number;
+  address?: string | null;
+}
+
 export interface AttendanceRecord {
   id: string;
   employeeId: string;
@@ -12,6 +18,8 @@ export interface AttendanceRecord {
   checkInTime: string | null;
   checkOutTime: string | null;
   workHours: string;
+  checkInLocation?: LocationPoint | null;
+  checkOutLocation?: LocationPoint | null;
 }
 
 export interface AttendanceData {

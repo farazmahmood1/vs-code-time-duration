@@ -27,6 +27,7 @@ import {
   YAxis,
 } from "recharts";
 import { format } from "date-fns";
+import { MoodCheckIn } from "@/components/mood/MoodCheckIn";
 
 const getBarColor = (day: string) => {
   return day === "Sat" || day === "Sun" ? "#FF0000" : "#01339a";
@@ -271,6 +272,9 @@ export default function EmployeeDashboard() {
           </Card>
         </div>
       </div>
+
+      {/* Mood Check-In */}
+      <MoodCheckIn />
     </div>
   );
 }
