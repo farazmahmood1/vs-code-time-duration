@@ -12,7 +12,7 @@ import PublicLayout from "./layout/public-layout";
 import { OnboardingGuard } from "./layout/OnboardingGuard";
 import { PasswordChangeGuard } from "./layout/PasswordChangeGuard";
 
-// Admin Pages
+// Admin Page
 
 import Announcements from "./pages/admin/announcements";
 import Attendance from "./pages/admin/attendance";
