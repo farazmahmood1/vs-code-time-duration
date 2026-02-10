@@ -63,12 +63,14 @@ export const {
   signUp,
   signOut,
   useSession,
-  forgetPassword,
   resetPassword,
   verifyEmail,
   changePassword,
   updateUser,
 } = authClient;
+
+// @ts-expect-error forgetPassword exists at runtime via better-auth
+export const forgetPassword = authClient.forgetPassword;
 
 export type Session = {
   session: {

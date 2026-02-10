@@ -3,7 +3,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useRole } from "@/hooks/useRole";
-import { useSession } from "@/lib/auth-client";
 import {
   useActiveWellnessChallenges,
   useMyChallenges,
@@ -18,8 +17,6 @@ import { ChallengeLeaderboard } from "@/components/wellness/ChallengeLeaderboard
 
 export default function WellnessPage() {
   const { isAdmin } = useRole();
-  const { data: session } = useSession();
-  const userId = session?.user?.id;
 
   const { data: activeChallenges, isLoading: loadingActive } =
     useActiveWellnessChallenges();

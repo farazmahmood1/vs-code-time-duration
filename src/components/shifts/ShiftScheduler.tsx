@@ -2,9 +2,9 @@ import { useState, useMemo } from "react";
 import { format, addDays, startOfWeek, addWeeks, subWeeks } from "date-fns";
 import {
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   DragOverlay,
-  DragStartEvent,
+  type DragStartEvent,
   PointerSensor,
   useSensor,
   useSensors,
@@ -62,7 +62,8 @@ export function ShiftScheduler() {
   );
   const { data: conflicts = [] } = useShiftConflicts(weekStartStr);
   const { data: shifts = [] } = useShifts();
-  const { employees = [] } = useEmployees();
+  const { data: employeesData } = useEmployees(1, "", "", "", "", "");
+  const employees = employeesData?.employees || [];
   const moveMutation = useMoveScheduleEntry();
 
   // Get unique employees from schedule

@@ -49,7 +49,7 @@ export default function ChatPage() {
   const { data: searchResults, isLoading: isSearching } = useSearchChatUsers(searchEmail);
   const [typingUsers, setTypingUsers] = useState<Record<string, string>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const messages = messagesData?.data || [];
   const activeConv = conversations?.find((c) => c.id === activeConvId);

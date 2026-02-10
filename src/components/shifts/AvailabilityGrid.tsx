@@ -7,7 +7,6 @@ import { Loader2, Save } from "lucide-react";
 import {
   useMyAvailability,
   useUpdateMyAvailability,
-  type AvailabilitySlot,
 } from "@/hooks/useAvailability";
 
 const DAY_NAMES = [

@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -27,7 +26,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
 import {
   useCurrentWeekData,
   useMyTimesheetSubmissions,
@@ -35,7 +33,7 @@ import {
   type TimesheetEntryInput,
 } from "@/hooks/useTimesheetSubmissions";
 import { format, startOfWeek, addDays } from "date-fns";
-import { CalendarDays, Clock, Loader2, Plus, Send } from "lucide-react";
+import { CalendarDays, Clock, Loader2, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 
 // Inline project fetch for the select

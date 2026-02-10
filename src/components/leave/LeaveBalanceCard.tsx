@@ -15,15 +15,6 @@ const LEAVE_TYPE_LABELS: Record<string, string> = {
   UNPAID_LEAVE: "Unpaid Leave",
 };
 
-const LEAVE_TYPE_COLORS: Record<string, string> = {
-  ANNUAL_LEAVE: "bg-blue-500",
-  MATERNITY_LEAVE: "bg-pink-500",
-  CASUAL_LEAVE: "bg-green-500",
-  SICK_LEAVE: "bg-red-500",
-  PERSONAL_LEAVE: "bg-purple-500",
-  UNPAID_LEAVE: "bg-gray-500",
-};
-
 const LeaveBalanceCard = ({ balance }: LeaveBalanceCardProps) => {
   const total = balance.totalDays + balance.carriedOver;
   const usedPercent = total > 0 ? (balance.usedDays / total) * 100 : 0;

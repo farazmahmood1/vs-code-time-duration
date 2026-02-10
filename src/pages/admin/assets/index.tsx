@@ -14,7 +14,7 @@ const ASSET_TYPES = ["LAPTOP", "MONITOR", "KEYBOARD", "MOUSE", "HEADSET", "PHONE
 const CONDITION_COLORS: Record<string, string> = { NEW: "text-green-600", GOOD: "text-blue-600", FAIR: "text-yellow-600", POOR: "text-orange-600", DAMAGED: "text-red-600", RETIRED: "text-gray-500" };
 
 export default function AdminAssets() {
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
   const { data, isLoading } = useAssets({ page });
   const { data: summary } = useAssetSummary();
   const createAsset = useCreateAsset();

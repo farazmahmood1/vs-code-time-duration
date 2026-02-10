@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
-import { useToast } from "@/hooks/use-toast";
 
 export interface ChatUser {
   id: string;

@@ -6,14 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, ChevronRight, Clock, ArrowRightLeft, Loader2 } from "lucide-react";
 import { useMyShift } from "@/hooks/useShifts";
-import { useShiftSchedule, type ScheduleEntry } from "@/hooks/useShiftSchedule";
+import { useShiftSchedule } from "@/hooks/useShiftSchedule";
 import { useMySwapRequests } from "@/hooks/useShiftSwap";
-import { useAuth } from "@/hooks/useAuth";
+import { useSession } from "@/lib/auth-client";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default function EmployeeShiftsPage() {
-  const { user } = useAuth();
+  const { data: session } = useSession();
+  const user = session?.user;
   const { data: currentShift } = useMyShift();
   const [weekOffset, setWeekOffset] = useState(0);
   const { data: swapRequests = [], isLoading: swapsLoading } = useMySwapRequests();
