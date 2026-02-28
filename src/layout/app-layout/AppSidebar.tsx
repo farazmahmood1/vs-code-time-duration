@@ -1,4 +1,3 @@
-// components/AppSidebar.tsx
 import {
   Sidebar,
   SidebarContent,
@@ -249,7 +248,6 @@ export function AppSidebar() {
       employeeTitle: "Documents",
       roles: ["admin", "employee"],
     },
-
     {
       url: "/app/profile",
       icon: User,
@@ -276,19 +274,24 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarContent>
-        <div className="p-4 border-b">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 flex items-center justify-center">
-              <img src="/imgs/logo.png" alt="Logo" />
+      <SidebarContent className="bg-sidebar">
+        {/* Logo */}
+        <div className="px-4 py-5 border-b border-sidebar-border">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <img src="/imgs/logo.png" alt="Logo" className="w-6 h-6" />
             </div>
-            {open && <span className="font-semibold text-2xl">Forrof</span>}
+            {open && (
+              <span className="font-bold text-xl tracking-tight text-foreground">
+                Forrof
+              </span>
+            )}
           </div>
         </div>
 
-        <SidebarGroup>
+        <SidebarGroup className="px-3 py-2">
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-0.5">
               {MENU_ITEMS.filter((item) => item.roles.includes(userRole)).map(
                 (item) => {
                   const isActive = item.url === "/app"
@@ -298,22 +301,19 @@ export function AppSidebar() {
                     userRole === "admin" ? item.adminTitle : item.employeeTitle;
 
                   return (
-                    <SidebarMenuItem
-                      key={item.url}
-                      className={`my-1 border-l-4 border-transparent ${isActive ? "border-l-4 border-brand" : ""
-                        }`}
-                    >
+                    <SidebarMenuItem key={item.url}>
                       <SidebarMenuButton
                         size="lg"
                         asChild
-                        className={`${isActive
-                            ? "bg-blue-50 rounded-none text-brand hover:bg-blue-50 hover:text-brand"
-                            : ""
-                          }`}
+                        className={`rounded-xl transition-all duration-200 ${
+                          isActive
+                            ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground shadow-sm shadow-primary/25"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        }`}
                       >
                         <Link to={item.url}>
-                          <item.icon className="h-[18px] w-[18px] mr-1" />
-                          <span className="text-[15px]">{displayTitle}</span>
+                          <item.icon className="h-[18px] w-[18px] mr-1 shrink-0" />
+                          <span className="text-[13px] font-medium">{displayTitle}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -325,16 +325,16 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="px-3 pb-4 bg-sidebar">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
               onClick={handleLogout}
-              className="text-destructive hover:bg-red-100 hover:text-destructive cursor-pointer"
+              className="rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer transition-all duration-200"
             >
               <LogOut className="h-[18px] w-[18px] mr-1" />
-              <span className="text-[15px]">Logout</span>
+              <span className="text-[13px] font-medium">Logout</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

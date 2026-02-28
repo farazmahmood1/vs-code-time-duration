@@ -113,43 +113,51 @@ const Dashboard = () => {
     : [];
 
   return (
-    <div className="space-y-6">
-      {/* Filters */}
-      <DashboardFilters
-        department={department}
-        project={project}
-        startDate={startDate}
-        endDate={endDate}
-        onDepartmentChange={setDepartment}
-        onProjectChange={setProject}
-        onStartDateChange={setStartDate}
-        onEndDateChange={setEndDate}
-      />
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Overview of your team's activity and performance
+          </p>
+        </div>
+        <DashboardFilters
+          department={department}
+          project={project}
+          startDate={startDate}
+          endDate={endDate}
+          onDepartmentChange={setDepartment}
+          onProjectChange={setProject}
+          onStartDateChange={setStartDate}
+          onEndDateChange={setEndDate}
+        />
+      </div>
 
       {isLoading ? (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Skeleton key={i} className="h-28" />
+              <Skeleton key={i} className="h-28 rounded-2xl" />
             ))}
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Skeleton className="h-[350px] lg:col-span-2" />
-            <Skeleton className="h-[350px]" />
+            <Skeleton className="h-[350px] lg:col-span-2 rounded-2xl" />
+            <Skeleton className="h-[350px] rounded-2xl" />
           </div>
         </div>
       ) : (
         <>
-          {/* Main Stats - 6 cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Main Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {statCards.map((card, index) => (
               <StatCard key={index} {...card} />
             ))}
           </div>
 
-          {/* Leave Quick Stats - 3 compact cards */}
+          {/* Leave Quick Stats */}
           {leaveQuickStats.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               {leaveQuickStats.map((card, index) => (
                 <StatCard key={index} {...card} />
               ))}

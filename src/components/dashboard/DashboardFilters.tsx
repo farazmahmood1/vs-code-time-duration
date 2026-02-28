@@ -33,7 +33,7 @@ export const DashboardFilters = ({
 }: DashboardFiltersProps) => {
   return (
     <div className="flex justify-end gap-2 flex-wrap">
-      <div className="">
+      <div>
         <DepartmentSelect
           value={department === "all" ? "" : department}
           onValueChange={(val) => onDepartmentChange(val === "" ? "all" : val)}
@@ -51,19 +51,19 @@ export const DashboardFilters = ({
 
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="default" className="font-normal">
-            <CalendarIcon className="mr-2 h-4 w-4" />
+          <Button variant="outline" className="font-normal rounded-xl border-border/50 bg-card hover:bg-muted/60">
+            <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
             {startDate && endDate ? (
               <span>
                 {format(startDate, "dd MMM")} -{" "}
                 {format(endDate, "dd MMM, yyyy")}
               </span>
             ) : (
-              <span>Date Range</span>
+              <span className="text-muted-foreground">Date Range</span>
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="end">
+        <PopoverContent className="w-auto p-0 rounded-xl border-border/50 shadow-lg" align="end">
           <Calendar
             mode="range"
             selected={{ from: startDate, to: endDate }}
@@ -74,7 +74,7 @@ export const DashboardFilters = ({
             }}
             disabled={(date) => date > new Date()}
             numberOfMonths={2}
-            className="rounded-md border"
+            className="rounded-xl"
             initialFocus
           />
         </PopoverContent>

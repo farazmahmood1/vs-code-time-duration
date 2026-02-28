@@ -11,7 +11,7 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuthState } from "@/hooks/useAuthState";
 import { signOut, useSession } from "@/lib/auth-client";
-import { LogOut, SquareCheckBigIcon, User } from "lucide-react";
+import { LogOut, Search, Settings, SquareCheckBigIcon, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -71,40 +71,72 @@ const Header = () => {
   };
 
   const userName = session?.user?.name.split(" ")[0] || "User";
+  const userFullName = session?.user?.name || "User";
   const userRole = session?.user?.role || "role";
   const userAvatar = session?.user?.image;
 
   return (
-    <header className="h-16 border-b flex items-center md:justify-end justify-between px-4 sticky top-0 bg-background z-10">
-      <SidebarTrigger className="md:hidden" />
-      <div className="flex items-center gap-4">
-        {/* <Bell className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-foreground transition-colors" /> */}
+    <header className="h-[72px] flex items-center justify-between px-4 sm:px-8 sticky top-0 bg-card z-10 border-b border-border/50">
+      {/* Left: Mobile trigger + Search */}
+      <div className="flex items-center gap-4 flex-1">
+        <SidebarTrigger className="md:hidden" />
+        <div className="hidden sm:flex items-center gap-3 bg-muted/60 rounded-xl px-4 py-2.5 w-full max-w-md transition-all focus-within:bg-muted focus-within:ring-2 focus-within:ring-primary/20">
+          <Search className="h-4 w-4 text-muted-foreground shrink-0" />
+          <input
+            type="text"
+            placeholder="Search anything..."
+            className="bg-transparent text-sm outline-none w-full placeholder:text-muted-foreground/70"
+          />
+        </div>
+      </div>
+
+      {/* Right: Actions */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        <button
+          onClick={() => navigate("/app/settings")}
+          className="h-10 w-10 rounded-xl flex items-center justify-center text-muted-foreground hover:bg-muted/80 hover:text-foreground transition-colors cursor-pointer"
+        >
+          <Settings className="h-[18px] w-[18px]" />
+        </button>
+
         <NotificationCenter />
+
+        <div className="w-px h-8 bg-border/60 mx-1 hidden sm:block" />
+
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="text-right">
-              <p className="text-sm font-medium">{userName}</p>
-              <p className="text-xs text-muted-foreground">{userRole}</p>
+          <DropdownMenuTrigger className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity rounded-xl px-2 py-1.5 hover:bg-muted/60">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-semibold text-foreground leading-tight">{userName}</p>
+              <p className="text-[11px] text-muted-foreground capitalize">{userRole}</p>
             </div>
             <UserAvatar
               src={userAvatar}
-              alt={userName}
-              initials={getInitials(userName)}
+              alt={userFullName}
+              initials={getInitials(userFullName)}
               size="md"
-              className="border border-primary"
+              className="ring-2 ring-primary/20"
             />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-lg border-border/50">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-semibold">{userFullName}</p>
+                <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
+              </div>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate("/app/profile")}>
+            <DropdownMenuItem onClick={() => navigate("/app/profile")} className="rounded-lg cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               <span>Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate("/app/settings")} className="rounded-lg cursor-pointer">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
             </DropdownMenuItem>
             {userRole === "employee" && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate("/onboarding")}>
+                <DropdownMenuItem onClick={() => navigate("/onboarding")} className="rounded-lg cursor-pointer">
                   <SquareCheckBigIcon className="mr-2 h-4 w-4" />
                   <span>Onboarding</span>
                 </DropdownMenuItem>
@@ -113,10 +145,10 @@ const Header = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleLogout}
-              className="hover:bg-red-100!"
+              className="rounded-lg cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
             >
-              <LogOut className="mr-2 h-4 w-4 text-destructive" />
-              <span className="text-destructive">Log out</span>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

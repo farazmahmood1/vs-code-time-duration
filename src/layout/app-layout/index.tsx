@@ -24,11 +24,11 @@ const AppLayout = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full ">
+      <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
-        <main className="w-full">
+        <main className="w-full flex flex-col min-h-screen">
           <Header />
-          <div className="p-3 sm:p-6">
+          <div className="flex-1 p-4 sm:p-6 lg:p-8">
             <Suspense
               fallback={<p className="text-md font-medium loading-text"></p>}
             >
