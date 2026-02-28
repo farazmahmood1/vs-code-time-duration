@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Check, X, Loader2, ArrowRightLeft } from "lucide-react";
+import { Check, X, Loader2, ArrowRightLeft, AlertTriangle } from "lucide-react";
 import {
   useSwapRequests,
   useRespondToSwapRequest,
@@ -25,9 +25,9 @@ import {
 import { format } from "date-fns";
 
 export function SwapRequestsTable() {
-  const [statusFilter, setStatusFilter] = useState<string>("");
-  const { data, isLoading } = useSwapRequests({
-    status: statusFilter || undefined,
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const { data, isLoading, error } = useSwapRequests({
+    status: statusFilter !== "all" ? statusFilter : undefined,
   });
   const respondMutation = useRespondToSwapRequest();
 
@@ -45,7 +45,7 @@ export function SwapRequestsTable() {
             <SelectValue placeholder="All Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All</SelectItem>
+            <SelectItem value="all">All</SelectItem>
             <SelectItem value="PENDING">Pending</SelectItem>
             <SelectItem value="APPROVED">Approved</SelectItem>
             <SelectItem value="REJECTED">Rejected</SelectItem>
@@ -56,6 +56,11 @@ export function SwapRequestsTable() {
       {isLoading ? (
         <div className="flex justify-center py-8">
           <Loader2 className="h-6 w-6 animate-spin" />
+        </div>
+      ) : error ? (
+        <div className="text-center py-8 text-destructive">
+          <AlertTriangle className="h-8 w-8 mx-auto mb-2" />
+          <p>Failed to load swap requests. Please try again later.</p>
         </div>
       ) : requests.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">

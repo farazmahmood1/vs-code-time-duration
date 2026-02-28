@@ -56,15 +56,11 @@ export function AddEmployeeModal({
           password: tempPassword,
           data: {
             departmentId: data.departmentId,
-            tempPassword: tempPassword, // Backup for backend hook
           },
         },
         {
-          // @ts-expect-error - library types might not explicitly allow fetchOptions here but it passes through
-          fetchOptions: {
-            headers: {
-              "x-temp-password": tempPassword,
-            },
+          headers: {
+            "x-temp-password": tempPassword,
           },
         }
       );

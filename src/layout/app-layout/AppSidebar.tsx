@@ -291,7 +291,9 @@ export function AppSidebar() {
             <SidebarMenu>
               {MENU_ITEMS.filter((item) => item.roles.includes(userRole)).map(
                 (item) => {
-                  const isActive = location.pathname === item.url;
+                  const isActive = item.url === "/app"
+                    ? location.pathname === "/app"
+                    : location.pathname.startsWith(item.url);
                   const displayTitle =
                     userRole === "admin" ? item.adminTitle : item.employeeTitle;
 

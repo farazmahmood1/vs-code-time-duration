@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ResponsiveDialog from "@/components/ResponsiveDialog";
 import { useEmployees } from "@/hooks/useEmployees";
 import { useRemoveEmployeeFromDepartment } from "@/hooks/useDepartments";
+import { useOnlineUsers } from "@/hooks/useOnlineUsers";
 import type { Employee } from "@/hooks/useEmployees";
 import { Grid3x3, List, Plus, Search, Users } from "lucide-react";
 import { useState } from "react";
@@ -31,6 +32,7 @@ const Employees = () => {
     null
   );
   const removeMutation = useRemoveEmployeeFromDepartment();
+  const onlineUserIds = useOnlineUsers();
 
   const { data, isLoading } = useEmployees(
     page,
@@ -151,7 +153,7 @@ const Employees = () => {
               {data?.employees && data.employees.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {data.employees.map((employee) => (
-                    <EmployeeCard key={employee.id} employee={employee} />
+                    <EmployeeCard key={employee.id} employee={employee} isOnline={onlineUserIds.has(employee.id)} />
                   ))}
                 </div>
               ) : (
@@ -175,6 +177,7 @@ const Employees = () => {
               {data?.employees && data.employees.length > 0 ? (
                 <EmployeeTable
                   employees={data.employees || []}
+                  onlineUserIds={onlineUserIds}
                   onAssignClick={(employee) => {
                     setSelectedEmployee(employee);
                     setAssignDialogOpen(true);

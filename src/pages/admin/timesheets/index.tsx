@@ -75,6 +75,7 @@ export default function AdminTimesheets() {
 
   // Stats
   const pendingCount = records.filter((r) => r.status === "PENDING").length;
+  const approvedCount = records.filter((r) => r.status === "APPROVED").length;
 
   return (
     <div className="space-y-6">
@@ -112,13 +113,11 @@ export default function AdminTimesheets() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Current Page
+              Approved
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {page} / {meta?.totalPages || 1}
-            </div>
+            <div className="text-2xl font-bold text-green-600">{approvedCount}</div>
           </CardContent>
         </Card>
       </div>

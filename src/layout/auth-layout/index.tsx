@@ -8,7 +8,7 @@ const AuthLayout = () => {
 
   useEffect(() => {
     if (!isPending && session) {
-      navigate("/");
+      navigate("/app");
     }
   }, [session, isPending, navigate]);
 

@@ -11,6 +11,7 @@ import AuthLayout from "./layout/auth-layout";
 import PublicLayout from "./layout/public-layout";
 import { OnboardingGuard } from "./layout/OnboardingGuard";
 import { PasswordChangeGuard } from "./layout/PasswordChangeGuard";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 // Admin Page
 
@@ -153,59 +154,58 @@ const App = () => {
                 </ProtectedRoute>
               }
             >
-              <Route path="profile" element={<Profile />} />
-              <Route path="settings" element={<Settings />} />
-              <Route path="chat" element={<ChatPage />} />
-              <Route path="calendar" element={<CalendarPage />} />
-              <Route path="pomodoro" element={<PomodoroPage />} />
-              <Route path="leaderboard" element={<GamificationPage />} />
-              <Route path="wellness" element={<WellnessPage />} />
+              <Route path="profile" element={<ErrorBoundary><Profile /></ErrorBoundary>} />
+              <Route path="settings" element={<ErrorBoundary><Settings /></ErrorBoundary>} />
+              <Route path="chat" element={<ErrorBoundary><ChatPage /></ErrorBoundary>} />
+              <Route path="calendar" element={<ErrorBoundary><CalendarPage /></ErrorBoundary>} />
+              <Route path="pomodoro" element={<ErrorBoundary><PomodoroPage /></ErrorBoundary>} />
+              <Route path="leaderboard" element={<ErrorBoundary><GamificationPage /></ErrorBoundary>} />
+              <Route path="wellness" element={<ErrorBoundary><WellnessPage /></ErrorBoundary>} />
               {isAdmin && (
                 <>
-                  <Route index element={<Dashboard />} />
-                  <Route path="employees" element={<Employees />} />
-                  <Route path="employees/:id" element={<EmployeeDetail />} />
-                  <Route path="departments" element={<DepartmentsPage />} />
-                  <Route path="attendance" element={<Attendance />} />
-                  <Route path="attendance/:id" element={<SessionDetails />} />
-                  <Route path="leaves" element={<Leaves />} />
-                  <Route path="announcements" element={<Announcements />} />
-                  <Route path="projects" element={<ProjectsPage />} />
-                  <Route path="shifts" element={<ShiftsPage />} />
-                  <Route path="overtime" element={<OvertimePage />} />
-                  <Route path="timesheets" element={<AdminTimesheets />} />
-                  <Route path="reports" element={<AdminReports />} />
-                  <Route path="reviews" element={<AdminReviews />} />
-                  <Route path="assets" element={<AdminAssets />} />
-                  <Route path="standups" element={<AdminStandups />} />
-                  <Route path="feedback" element={<AdminFeedback />} />
-                  <Route path="mood-analytics" element={<MoodAnalyticsPage />} />
-                  <Route path="org-chart" element={<OrgChartPage />} />
-                  <Route path="documents" element={<AdminDocuments />} />
-                  <Route path="compensation" element={<AdminCompensation />} />
-                  <Route path="expenses" element={<AdminExpenses />} />
-                  <Route path="offboarding" element={<AdminOffboarding />} />
-                  <Route path="offboarding/:id" element={<OffboardingDetail />} />
-                  <Route path="integrations" element={<IntegrationsPage />} />
-                  {/* Settings is already above */}
+                  <Route index element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
+                  <Route path="employees" element={<ErrorBoundary><Employees /></ErrorBoundary>} />
+                  <Route path="employees/:id" element={<ErrorBoundary><EmployeeDetail /></ErrorBoundary>} />
+                  <Route path="departments" element={<ErrorBoundary><DepartmentsPage /></ErrorBoundary>} />
+                  <Route path="attendance" element={<ErrorBoundary><Attendance /></ErrorBoundary>} />
+                  <Route path="attendance/:id" element={<ErrorBoundary><SessionDetails /></ErrorBoundary>} />
+                  <Route path="leaves" element={<ErrorBoundary><Leaves /></ErrorBoundary>} />
+                  <Route path="announcements" element={<ErrorBoundary><Announcements /></ErrorBoundary>} />
+                  <Route path="projects" element={<ErrorBoundary><ProjectsPage /></ErrorBoundary>} />
+                  <Route path="shifts" element={<ErrorBoundary><ShiftsPage /></ErrorBoundary>} />
+                  <Route path="overtime" element={<ErrorBoundary><OvertimePage /></ErrorBoundary>} />
+                  <Route path="timesheets" element={<ErrorBoundary><AdminTimesheets /></ErrorBoundary>} />
+                  <Route path="reports" element={<ErrorBoundary><AdminReports /></ErrorBoundary>} />
+                  <Route path="reviews" element={<ErrorBoundary><AdminReviews /></ErrorBoundary>} />
+                  <Route path="assets" element={<ErrorBoundary><AdminAssets /></ErrorBoundary>} />
+                  <Route path="standups" element={<ErrorBoundary><AdminStandups /></ErrorBoundary>} />
+                  <Route path="feedback" element={<ErrorBoundary><AdminFeedback /></ErrorBoundary>} />
+                  <Route path="mood-analytics" element={<ErrorBoundary><MoodAnalyticsPage /></ErrorBoundary>} />
+                  <Route path="org-chart" element={<ErrorBoundary><OrgChartPage /></ErrorBoundary>} />
+                  <Route path="documents" element={<ErrorBoundary><AdminDocuments /></ErrorBoundary>} />
+                  <Route path="compensation" element={<ErrorBoundary><AdminCompensation /></ErrorBoundary>} />
+                  <Route path="expenses" element={<ErrorBoundary><AdminExpenses /></ErrorBoundary>} />
+                  <Route path="offboarding" element={<ErrorBoundary><AdminOffboarding /></ErrorBoundary>} />
+                  <Route path="offboarding/:id" element={<ErrorBoundary><OffboardingDetail /></ErrorBoundary>} />
+                  <Route path="integrations" element={<ErrorBoundary><IntegrationsPage /></ErrorBoundary>} />
                 </>
               )}
               {isEmployee && (
                 <>
-                  <Route index element={<EmployeeDashboard />} />
-                  <Route path="attendance" element={<EmployeeAttendance />} />
-                  <Route path="timesheets" element={<EmployeeTimesheets />} />
-                  <Route path="leaves" element={<EmployeeLeaves />} />
+                  <Route index element={<ErrorBoundary><EmployeeDashboard /></ErrorBoundary>} />
+                  <Route path="attendance" element={<ErrorBoundary><EmployeeAttendance /></ErrorBoundary>} />
+                  <Route path="timesheets" element={<ErrorBoundary><EmployeeTimesheets /></ErrorBoundary>} />
+                  <Route path="leaves" element={<ErrorBoundary><EmployeeLeaves /></ErrorBoundary>} />
                   <Route
                     path="announcements"
-                    element={<EmployeeAnnouncements />}
+                    element={<ErrorBoundary><EmployeeAnnouncements /></ErrorBoundary>}
                   />
-                  <Route path="feedback" element={<EmployeeFeedback />} />
-                  <Route path="shifts" element={<EmployeeShifts />} />
-                  <Route path="availability" element={<AvailabilityPage />} />
-                  <Route path="documents" element={<EmployeeDocuments />} />
-                  <Route path="compensation" element={<EmployeeCompensation />} />
-                  <Route path="expenses" element={<EmployeeExpenses />} />
+                  <Route path="feedback" element={<ErrorBoundary><EmployeeFeedback /></ErrorBoundary>} />
+                  <Route path="shifts" element={<ErrorBoundary><EmployeeShifts /></ErrorBoundary>} />
+                  <Route path="availability" element={<ErrorBoundary><AvailabilityPage /></ErrorBoundary>} />
+                  <Route path="documents" element={<ErrorBoundary><EmployeeDocuments /></ErrorBoundary>} />
+                  <Route path="compensation" element={<ErrorBoundary><EmployeeCompensation /></ErrorBoundary>} />
+                  <Route path="expenses" element={<ErrorBoundary><EmployeeExpenses /></ErrorBoundary>} />
                 </>
               )}
             </Route>

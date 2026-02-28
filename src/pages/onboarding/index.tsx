@@ -52,7 +52,7 @@ export function OnboardingPage({ onCompleted }: OnboardingPageProps) {
   };
 
   const handleGoToDashboard = () => {
-    navigate("/");
+    navigate("/app");
   };
 
   const handleBackToLogin = async () => {

@@ -13,10 +13,10 @@ export function PasswordChangeGuard({ children }: PasswordChangeGuardProps) {
   const user = session?.user as Record<string, unknown>;
   const isPasswordChanged = (user?.isPasswordChanged as boolean) ?? true;
 
-  if (session?.user && !isPasswordChanged && location.pathname !== "/profile") {
+  if (session?.user && !isPasswordChanged && location.pathname !== "/app/profile") {
     return (
       <>
-        <Navigate to="/profile" replace />
+        <Navigate to="/app/profile" replace />
         <ForcePasswordChangeModal
           open={true}
           onPasswordChanged={() => {
@@ -28,7 +28,7 @@ export function PasswordChangeGuard({ children }: PasswordChangeGuardProps) {
     );
   }
 
-  if (session?.user && !isPasswordChanged && location.pathname === "/profile") {
+  if (session?.user && !isPasswordChanged && location.pathname === "/app/profile") {
     return (
       <>
         {children}

@@ -50,7 +50,7 @@ const Dashboard = () => {
       value: data?.stats.activeEmployees || 0,
       icon: Users,
       color: "green" as const,
-      subtitle: "Currently working",
+      subtitle: "Checked in today",
     },
     {
       title: "Inactive Employees",

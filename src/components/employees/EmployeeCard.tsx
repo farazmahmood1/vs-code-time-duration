@@ -5,28 +5,36 @@ import { useNavigate } from "react-router-dom";
 
 interface EmployeeCardProps {
   employee: Employee;
+  isOnline?: boolean;
 }
 
-export const EmployeeCard = ({ employee }: EmployeeCardProps) => {
+export const EmployeeCard = ({ employee, isOnline = false }: EmployeeCardProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/employees/${employee.id}`);
+    navigate(`/app/employees/${employee.id}`);
   };
 
   return (
     <Card className="relative hover:shadow-lg transition-shadow">
       <CardContent className="px-6 py-3">
         <div className="flex flex-col items-center text-center">
-          <UserAvatar
-            src={employee.avatar}
-            alt={employee.name}
-            initials={employee.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
-            size="xl"
-          />
+          <div className="relative">
+            <UserAvatar
+              src={employee.avatar}
+              alt={employee.name}
+              initials={employee.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
+              size="xl"
+            />
+            <span
+              className={`absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-white ${
+                isOnline ? "bg-green-500" : "bg-gray-400"
+              }`}
+            />
+          </div>
           <h3
             className="font-semibold text-lg mb-2 mt-4 hover:underline cursor-pointer"
             onClick={handleClick}
@@ -40,7 +48,7 @@ export const EmployeeCard = ({ employee }: EmployeeCardProps) => {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">ID</span>
-              <span className="font-medium">{employee.uniqueId || "N/A"}</span>
+              <span className="font-medium">{employee.uniqueId || "Unassigned"}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Email</span>

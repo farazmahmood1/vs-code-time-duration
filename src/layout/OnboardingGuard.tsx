@@ -16,12 +16,12 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
   if (
     session?.user &&
     !isProfileCompleted &&
-    location.pathname !== "/profile"
+    location.pathname !== "/app/profile"
   ) {
     document.documentElement.style.overflow = "hidden";
     return (
       <>
-        <Navigate to="/profile" replace />
+        <Navigate to="/app/profile" replace />
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
           <OnboardingPage
             onCompleted={() => {
@@ -37,7 +37,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
   if (
     session?.user &&
     !isProfileCompleted &&
-    location.pathname === "/profile"
+    location.pathname === "/app/profile"
   ) {
     document.documentElement.style.overflow = "hidden";
     return (

@@ -28,7 +28,7 @@ const SessionDetails = () => {
             <div className="flex flex-col items-center justify-center h-screen space-y-4">
                 <h1 className="text-2xl font-bold">Missing Navigation Context</h1>
                 <p className="text-muted-foreground">Please access this page from the Attendance table.</p>
-                <Button onClick={() => navigate("/attendance")}>Go Back</Button>
+                <Button onClick={() => navigate("/app/attendance")}>Go Back</Button>
             </div>
         );
     }
@@ -49,7 +49,7 @@ const SessionDetails = () => {
                 <p className="text-muted-foreground">
                     {error instanceof Error ? error.message : "Failed to fetch session data"}
                 </p>
-                <Button onClick={() => navigate("/attendance")}>Go Back</Button>
+                <Button onClick={() => navigate("/app/attendance")}>Go Back</Button>
             </div>
         );
     }
@@ -62,7 +62,7 @@ const SessionDetails = () => {
                 <p className="text-muted-foreground">
                     No activity sessions found for {employeeName} on {format(new Date(date || new Date()), "PPP")}
                 </p>
-                <Button onClick={() => navigate("/attendance")}>Go Back</Button>
+                <Button onClick={() => navigate("/app/attendance")}>Go Back</Button>
             </div>
         );
     }

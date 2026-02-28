@@ -35,7 +35,7 @@ const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export function ShiftScheduler() {
   const [weekOffset, setWeekOffset] = useState(0);
-  const [departmentFilter, setDepartmentFilter] = useState<string>("");
+  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [createDate, setCreateDate] = useState("");
   const [createEmployeeId, setCreateEmployeeId] = useState("");
@@ -56,9 +56,9 @@ export function ShiftScheduler() {
 
   const weekStartStr = format(weekStart, "yyyy-MM-dd");
 
-  const { data: schedule = [], isLoading } = useShiftSchedule(
+  const { data: schedule = [], isLoading, error: scheduleError } = useShiftSchedule(
     weekStartStr,
-    departmentFilter || undefined
+    departmentFilter !== "all" ? departmentFilter : undefined
   );
   const { data: conflicts = [] } = useShiftConflicts(weekStartStr);
   const { data: shifts = [] } = useShifts();
@@ -141,7 +141,7 @@ export function ShiftScheduler() {
               <SelectValue placeholder="All Departments" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Departments</SelectItem>
+              <SelectItem value="all">All Departments</SelectItem>
               {Array.from(
                 new Set(employees.map((e: any) => e.departmentId).filter(Boolean))
               ).map((deptId) => {
@@ -218,6 +218,11 @@ export function ShiftScheduler() {
         {isLoading ? (
           <div className="text-center py-8 text-muted-foreground">
             Loading schedule...
+          </div>
+        ) : scheduleError ? (
+          <div className="text-center py-8 text-destructive">
+            <AlertTriangle className="h-8 w-8 mx-auto mb-2" />
+            <p>Failed to load schedule. Please try again later.</p>
           </div>
         ) : (
           <DndContext

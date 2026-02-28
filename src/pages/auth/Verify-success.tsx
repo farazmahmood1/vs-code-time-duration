@@ -14,7 +14,7 @@ const VerifySuccess = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/");
+      navigate("/app");
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -29,7 +29,7 @@ const VerifySuccess = () => {
           Your account is now active. Redirecting to dashboard...
         </p>
         <Button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/app")}
           className="bg-primary hover:bg-primary/90"
         >
           Go to Dashboard

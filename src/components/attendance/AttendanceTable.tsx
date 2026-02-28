@@ -187,7 +187,7 @@ export const AttendanceTable = ({ data, isLoading, selectedDate }: AttendanceTab
                     variant="ghost"
                     size="sm"
                     onClick={() =>
-                      navigate(`/attendance/${record.id}`, {
+                      navigate(`/app/attendance/${record.id}`, {
                         state: {
                           employeeId: record.employeeId,
                           date: selectedDate.toISOString(),

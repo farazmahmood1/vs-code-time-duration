@@ -16,12 +16,16 @@ import {
 } from "@/components/ui/tooltip";
 import { DeactivateEmployeeModal } from "@/components/employees/DeactivateEmployeeModal";
 import type { Employee } from "@/hooks/useEmployees";
-import { DollarSign, UserMinus, UserPlus, Lock, LockOpen } from "lucide-react";
+import { DollarSign, UserMinus, UserPlus, Lock, LockOpen, Trash2, Loader2, AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEmployeeActions } from "@/hooks/useEmployees";
+import { useToast } from "@/hooks/use-toast";
+import ResponsiveDialog from "@/components/ResponsiveDialog";
 
 interface EmployeeTableProps {
   employees: Employee[];
+  onlineUserIds?: Set<string>;
   onAssignClick?: (employee: Employee) => void;
   onUnassignClick?: (employee: Employee) => void;
   onSalaryClick?: (employee: Employee) => void;
@@ -29,16 +33,20 @@ interface EmployeeTableProps {
 
 export const EmployeeTable = ({
   employees,
+  onlineUserIds,
   onAssignClick,
   onUnassignClick,
   onSalaryClick,
 }: EmployeeTableProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { deleteUser, isLoading: isDeleting } = useEmployeeActions();
   const [deactivateEmployee, setDeactivateEmployee] = useState<Employee | null>(
     null
   );
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
-  console.log("Employees:", employees);
+  const [deleteEmployee, setDeleteEmployee] = useState<Employee | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleAssignClick = (employee: Employee) => {
     if (onAssignClick) {
@@ -63,8 +71,35 @@ export const EmployeeTable = ({
     setIsDeactivateModalOpen(true);
   };
 
+  const handleDeleteClick = (employee: Employee) => {
+    setDeleteEmployee(employee);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteEmployee) return;
+    const result = await deleteUser(deleteEmployee.id);
+    if (result.success) {
+      toast({
+        title: "Employee deleted",
+        description: `${deleteEmployee.name} has been permanently deleted.`,
+      });
+    } else {
+      toast({
+        title: "Failed to delete",
+        description:
+          typeof result.error === "string"
+            ? result.error
+            : "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+    setIsDeleteDialogOpen(false);
+    setDeleteEmployee(null);
+  };
+
   const handleClick = (employeeId: string) => {
-    navigate(`/employees/${employeeId}`);
+    navigate(`/app/employees/${employeeId}`);
   };
 
   return (
@@ -99,15 +134,22 @@ export const EmployeeTable = ({
               {/* <TableCell className="font-medium">{employee.id}</TableCell> */}
               <TableCell>
                 <div className="flex items-center gap-3">
-                  <UserAvatar
-                    src={employee.avatar}
-                    alt={employee.name}
-                    initials={employee.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                    size="sm"
-                  />
+                  <div className="relative">
+                    <UserAvatar
+                      src={employee.avatar}
+                      alt={employee.name}
+                      initials={employee.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                      size="sm"
+                    />
+                    <span
+                      className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white ${
+                        onlineUserIds?.has(employee.id) ? "bg-green-500" : "bg-gray-400"
+                      }`}
+                    />
+                  </div>
                   <div className="flex flex-col">
                     <span
                       className="font-medium hover:underline cursor-pointer"
@@ -116,7 +158,7 @@ export const EmployeeTable = ({
                       {employee.name}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {employee.uniqueId}
+                      {employee.uniqueId || "Unassigned"}
                     </span>
                   </div>
                 </div>
@@ -235,6 +277,24 @@ export const EmployeeTable = ({
                           </TooltipContent>
                         </Tooltip>
                       )}
+
+                    {/* Delete Employee Button */}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClick(employee);
+                          }}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Delete Employee</TooltipContent>
+                    </Tooltip>
                   </div>
                 </TooltipProvider>
               </TableCell>
@@ -264,6 +324,46 @@ export const EmployeeTable = ({
         onOpenChange={setIsDeactivateModalOpen}
         employee={deactivateEmployee}
       />
+
+      {/* Delete Employee Confirmation Dialog */}
+      <ResponsiveDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title="Delete Employee Permanently"
+        description="This action cannot be undone."
+      >
+        <div className="space-y-4">
+          <div className="flex gap-3 p-3 rounded-md bg-destructive/10 text-destructive">
+            <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <p className="font-medium">
+                You are about to permanently delete {deleteEmployee?.name}.
+              </p>
+              <p className="mt-1">
+                All associated data including attendance records, leave requests,
+                and other information will be removed. This cannot be reversed.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-3 justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+            >
+              {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Delete Permanently
+            </Button>
+          </div>
+        </div>
+      </ResponsiveDialog>
     </div>
   );
 };

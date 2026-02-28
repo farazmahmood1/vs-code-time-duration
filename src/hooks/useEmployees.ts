@@ -92,7 +92,7 @@ const mapUserToEmployee = (
       addSuffix: true,
     }),
     salary: user.salary,
-    status: Math.random() > 0.5 ? "Online" : "Offline",
+    status: "Offline",
     avatar: user.image || getInitials(user.name || ""),
     githubUrl: user.githubUrl,
     linkedinUrl: user.linkedinUrl,
@@ -257,9 +257,35 @@ export const useEmployeeActions = () => {
     }
   };
 
+  const deleteUser = async (userId: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await authClient.admin.removeUser({
+        userId,
+      });
+
+      if (result.error) {
+        setError(result.error.message || "Failed to delete user");
+        return { success: false, error: result.error };
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+
+      return { success: true, data: result.data };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setError(message);
+      return { success: false, error: message };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     banUser,
     unbanUser,
+    deleteUser,
     isLoading,
     error,
   };
