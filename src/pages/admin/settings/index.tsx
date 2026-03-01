@@ -11,6 +11,7 @@ import { useState } from "react";
 import ImportantLinksTab from "./tabs/ImportantLinksTab";
 import TermsConditionsTab from "./tabs/TermsConditionsTab";
 import LeavePoliciesManager from "@/components/leave/LeavePoliciesManager";
+import BillingSection from "@/components/billing/BillingSection";
 
 export default function SettingsPage() {
   const { isAdmin } = useRole();
@@ -35,10 +36,11 @@ export default function SettingsPage() {
         onValueChange={setActiveTab}
         className="w-full space-y-6"
       >
-        <TabsList className="grid w-full max-w-md grid-cols-3 bg-gray-100">
-          <TabsTrigger value="links">Important Links</TabsTrigger>
-          <TabsTrigger value="terms">Terms & Conditions</TabsTrigger>
+        <TabsList className="grid w-full max-w-md grid-cols-4 bg-gray-100">
+          <TabsTrigger value="links">Links</TabsTrigger>
+          <TabsTrigger value="terms">Terms</TabsTrigger>
           {isAdmin && <TabsTrigger value="leave-policies">Leave Policies</TabsTrigger>}
+          {isAdmin && <TabsTrigger value="billing">Billing</TabsTrigger>}
         </TabsList>
 
         {/* Important Links Tab */}
@@ -99,6 +101,13 @@ export default function SettingsPage() {
         {isAdmin && (
           <TabsContent value="leave-policies" className="mt-0">
             <LeavePoliciesManager />
+          </TabsContent>
+        )}
+
+        {/* Billing Tab (admin only) */}
+        {isAdmin && (
+          <TabsContent value="billing" className="mt-0">
+            <BillingSection />
           </TabsContent>
         )}
       </Tabs>

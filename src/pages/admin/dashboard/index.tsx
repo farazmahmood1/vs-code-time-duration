@@ -1,8 +1,13 @@
+import { CurrentDateWidget } from "@/components/dashboard/CurrentDateWidget";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { DashboardFilters } from "@/components/dashboard/DashboardFilters";
+import { EfficiencyWidget } from "@/components/dashboard/EfficiencyWidget";
 import { OvertimeAlerts } from "@/components/dashboard/OvertimeAlerts";
+import { ProjectRoadmapWidget } from "@/components/dashboard/ProjectRoadmapWidget";
 import { RecentAttendance } from "@/components/dashboard/RecentAttendance";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { TotalProjectTimeWidget } from "@/components/dashboard/TotalProjectTimeWidget";
+import { UpcomingEventsWidget } from "@/components/dashboard/UpcomingEventsWidget";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAttendanceData, useAttendanceSummary } from "@/hooks/useAttendanceData";
 import { useDashboardData } from "@/hooks/useDashboardData";
@@ -136,11 +141,24 @@ const Dashboard = () => {
 
       {isLoading ? (
         <div className="space-y-6">
+          {/* Quick Glance skeletons */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <Skeleton className="h-32 rounded-2xl" />
+            <Skeleton className="h-32 rounded-2xl" />
+            <Skeleton className="h-32 sm:col-span-2 rounded-2xl" />
+          </div>
+          {/* Stat card skeletons */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <Skeleton key={i} className="h-28 rounded-2xl" />
             ))}
           </div>
+          {/* Projects & Events skeletons */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Skeleton className="h-[300px] lg:col-span-2 rounded-2xl" />
+            <Skeleton className="h-[300px] rounded-2xl" />
+          </div>
+          {/* Chart skeletons */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <Skeleton className="h-[350px] lg:col-span-2 rounded-2xl" />
             <Skeleton className="h-[350px] rounded-2xl" />
@@ -148,6 +166,15 @@ const Dashboard = () => {
         </div>
       ) : (
         <>
+          {/* Quick Glance: Date + Total Time + Efficiency */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <CurrentDateWidget />
+            <TotalProjectTimeWidget totalHours={data?.stats.totalHoursLogged || 0} />
+            <div className="sm:col-span-2">
+              <EfficiencyWidget weeklyHours={data?.weeklyHours || []} />
+            </div>
+          </div>
+
           {/* Main Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {statCards.map((card, index) => (
@@ -163,6 +190,14 @@ const Dashboard = () => {
               ))}
             </div>
           )}
+
+          {/* Projects & Events */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <ProjectRoadmapWidget />
+            </div>
+            <UpcomingEventsWidget />
+          </div>
 
           {/* Charts Section */}
           {data && (

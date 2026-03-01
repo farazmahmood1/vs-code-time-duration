@@ -11,7 +11,8 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuthState } from "@/hooks/useAuthState";
 import { signOut, useSession } from "@/lib/auth-client";
-import { LogOut, Search, Settings, SquareCheckBigIcon, User } from "lucide-react";
+import { GlobalSearch } from "@/components/GlobalSearch";
+import { LogOut, Settings, SquareCheckBigIcon, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -80,14 +81,7 @@ const Header = () => {
       {/* Left: Mobile trigger + Search */}
       <div className="flex items-center gap-4 flex-1">
         <SidebarTrigger className="md:hidden" />
-        <div className="hidden sm:flex items-center gap-3 bg-muted/60 rounded-xl px-4 py-2.5 w-full max-w-md transition-all focus-within:bg-muted focus-within:ring-2 focus-within:ring-primary/20">
-          <Search className="h-4 w-4 text-muted-foreground shrink-0" />
-          <input
-            type="text"
-            placeholder="Search anything..."
-            className="bg-transparent text-sm outline-none w-full placeholder:text-muted-foreground/70"
-          />
-        </div>
+        <GlobalSearch />
       </div>
 
       {/* Right: Actions */}

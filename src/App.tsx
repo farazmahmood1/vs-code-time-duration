@@ -3,12 +3,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useRole } from "./hooks/useRole";
 import AppLayout from "./layout/app-layout";
 import ProtectedRoute from "./layout/app-layout/ProtectedRoute";
 import AuthLayout from "./layout/auth-layout";
 import PublicLayout from "./layout/public-layout";
+import SuperAdminLayout from "./layout/super-admin-layout";
 import { OnboardingGuard } from "./layout/OnboardingGuard";
 import { PasswordChangeGuard } from "./layout/PasswordChangeGuard";
 import { ErrorBoundary } from "./components/ErrorBoundary";
@@ -60,6 +61,15 @@ import EmployeeDocuments from "./pages/employee/documents";
 import EmployeeCompensation from "./pages/employee/compensation";
 import EmployeeExpenses from "./pages/employee/expenses";
 
+// Super Admin Pages
+import SuperAdminDashboard from "./pages/super-admin/dashboard";
+import SuperAdminCompanies from "./pages/super-admin/companies";
+import CompanyDetail from "./pages/super-admin/companies/CompanyDetail";
+import SuperAdminPlans from "./pages/super-admin/plans";
+import SuperAdminSubscriptions from "./pages/super-admin/subscriptions";
+import SuperAdminAuditLogs from "./pages/super-admin/audit-logs";
+import SuperAdminSettings from "./pages/super-admin/settings";
+
 // Shared Pages
 import ChatPage from "./pages/chat";
 import CalendarPage from "./pages/calendar";
@@ -88,7 +98,7 @@ import CookiePolicyPage from "./pages/public/CookiePolicyPage";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const { isAdmin, isEmployee, isLoading } = useRole();
+  const { isAdmin, isEmployee, isSuperAdmin, isLoading } = useRole();
 
   // Show loading page while determining user role
   if (isLoading) {
@@ -142,15 +152,19 @@ const App = () => {
               path="/app"
               element={
                 <ProtectedRoute>
-                  <PasswordChangeGuard>
-                    {isEmployee ? (
-                      <OnboardingGuard>
+                  {isSuperAdmin ? (
+                    <Navigate to="/super-admin" replace />
+                  ) : (
+                    <PasswordChangeGuard>
+                      {isEmployee ? (
+                        <OnboardingGuard>
+                          <AppLayout />
+                        </OnboardingGuard>
+                      ) : (
                         <AppLayout />
-                      </OnboardingGuard>
-                    ) : (
-                      <AppLayout />
-                    )}
-                  </PasswordChangeGuard>
+                      )}
+                    </PasswordChangeGuard>
+                  )}
                 </ProtectedRoute>
               }
             >
@@ -209,6 +223,26 @@ const App = () => {
                 </>
               )}
             </Route>
+
+            {/* Super Admin Routes */}
+            {isSuperAdmin && (
+              <Route
+                path="/super-admin"
+                element={
+                  <ProtectedRoute>
+                    <SuperAdminLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<ErrorBoundary><SuperAdminDashboard /></ErrorBoundary>} />
+                <Route path="companies" element={<ErrorBoundary><SuperAdminCompanies /></ErrorBoundary>} />
+                <Route path="companies/:id" element={<ErrorBoundary><CompanyDetail /></ErrorBoundary>} />
+                <Route path="plans" element={<ErrorBoundary><SuperAdminPlans /></ErrorBoundary>} />
+                <Route path="subscriptions" element={<ErrorBoundary><SuperAdminSubscriptions /></ErrorBoundary>} />
+                <Route path="audit-logs" element={<ErrorBoundary><SuperAdminAuditLogs /></ErrorBoundary>} />
+                <Route path="settings" element={<ErrorBoundary><SuperAdminSettings /></ErrorBoundary>} />
+              </Route>
+            )}
 
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,6 +1,6 @@
 import { useSession } from "@/lib/auth-client";
 
-export type UserRole = "admin" | "employee";
+export type UserRole = "super_admin" | "admin" | "employee";
 
 export const useRole = () => {
   const { data: session, isPending } = useSession();
@@ -9,7 +9,8 @@ export const useRole = () => {
 
   return {
     role: role || "employee",
-    isAdmin: role === "admin",
+    isSuperAdmin: role === "super_admin",
+    isAdmin: role === "admin" || role === "super_admin",
     isEmployee: role === "employee" || !role,
     isLoading: isPending,
   };

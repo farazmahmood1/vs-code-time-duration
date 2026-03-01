@@ -1,0 +1,97 @@
+import { useSession } from "@/lib/auth-client";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Shield, Mail, User, Key } from "lucide-react";
+
+const SuperAdminSettings = () => {
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const initials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "SA";
+
+  return (
+    <div className="space-y-6 max-w-2xl">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold">Settings</h1>
+        <p className="text-muted-foreground text-sm mt-1">
+          Super Admin profile and platform settings.
+        </p>
+      </div>
+
+      {/* Profile Card */}
+      <Card className="p-6 rounded-2xl border border-border/50 shadow-sm">
+        <div className="flex items-center gap-4 mb-6">
+          <Avatar className="h-16 w-16">
+            <AvatarImage src={user?.image || ""} />
+            <AvatarFallback className="bg-indigo-600 text-white text-lg font-semibold">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h2 className="text-lg font-semibold">{user?.name}</h2>
+            <Badge className="bg-indigo-600/10 text-indigo-600 border-0 mt-1">
+              <Shield className="h-3 w-3 mr-1" />
+              Super Admin
+            </Badge>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
+            <User className="h-4 w-4 text-muted-foreground" />
+            <div>
+              <p className="text-xs text-muted-foreground">Name</p>
+              <p className="text-sm font-medium">{user?.name}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
+            <Mail className="h-4 w-4 text-muted-foreground" />
+            <div>
+              <p className="text-xs text-muted-foreground">Email</p>
+              <p className="text-sm font-medium">{user?.email}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
+            <Key className="h-4 w-4 text-muted-foreground" />
+            <div>
+              <p className="text-xs text-muted-foreground">User ID</p>
+              <p className="text-sm font-medium font-mono text-xs">{user?.id}</p>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Platform Info */}
+      <Card className="p-6 rounded-2xl border border-border/50 shadow-sm">
+        <h3 className="font-semibold mb-4">Platform Information</h3>
+        <div className="space-y-3 text-sm">
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Platform</span>
+            <span className="font-medium">Forrof Tracker</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Version</span>
+            <span className="font-medium">1.0.0</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Environment</span>
+            <Badge variant="outline">
+              {import.meta.env.MODE}
+            </Badge>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+export default SuperAdminSettings;
