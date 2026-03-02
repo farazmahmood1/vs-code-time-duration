@@ -1,21 +1,27 @@
-import { OnboardingPage } from "@/pages/onboarding";
-import { useSession } from "@/lib/auth-client";
+import { OwnerOnboardingPage } from "@/pages/owner-onboarding";
+import { useSession, authClient } from "@/lib/auth-client";
 import { Navigate, useLocation } from "react-router-dom";
 
-interface OnboardingGuardProps {
+interface OwnerOnboardingGuardProps {
   children: React.ReactNode;
 }
 
-export function OnboardingGuard({ children }: OnboardingGuardProps) {
+const handleOnboardingComplete = async () => {
+  document.documentElement.style.overflow = "auto";
+  // Force-refresh the session so guards see updated isProfileCompleted
+  await authClient.getSession({ fetchOptions: { cache: "no-store" } });
+};
+
+export function OwnerOnboardingGuard({ children }: OwnerOnboardingGuardProps) {
   const { data: session } = useSession();
   const location = useLocation();
 
   const user = session?.user as Record<string, unknown>;
-  const role = user?.role as string | undefined;
   const isProfileCompleted = (user?.isProfileCompleted as boolean) ?? true;
+  const role = user?.role as string;
 
-  // Only show onboarding for employees, never for admin or super_admin
-  if (role === "admin" || role === "super_admin") {
+  // Only apply to admin users
+  if (role !== "admin") {
     return <>{children}</>;
   }
 
@@ -29,12 +35,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
       <>
         <Navigate to="/app/profile" replace />
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
-          <OnboardingPage
-            onCompleted={() => {
-              console.log("Onboarding completed, reloading...");
-              window.location.reload();
-            }}
-          />
+          <OwnerOnboardingPage onCompleted={handleOnboardingComplete} />
         </div>
       </>
     );
@@ -50,12 +51,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
       <>
         {children}
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
-          <OnboardingPage
-            onCompleted={() => {
-              console.log("Onboarding completed, reloading...");
-              window.location.reload();
-            }}
-          />
+          <OwnerOnboardingPage onCompleted={handleOnboardingComplete} />
         </div>
       </>
     );

@@ -6,6 +6,16 @@ import {
   useOverrideSubscription,
   useAdminPlans,
 } from "@/hooks/useSuperAdmin";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,13 +31,12 @@ import {
   ArrowLeft,
   Building2,
   Users,
-  Globe,
   Calendar,
   Shield,
   CreditCard,
 } from "lucide-react";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const statusColors: Record<string, string> = {
   ACTIVE:
@@ -47,6 +56,14 @@ const CompanyDetailPage = () => {
   const overrideSub = useOverrideSubscription();
   const setFeature = useSetFeatureOverride();
   const [selectedPlan, setSelectedPlan] = useState<string>("");
+  const [confirmStatus, setConfirmStatus] = useState<string | null>(null);
+
+  // Initialize the dropdown with the current subscription's plan
+  useEffect(() => {
+    if (company?.subscriptions?.[0]?.planId) {
+      setSelectedPlan(company.subscriptions[0].planId);
+    }
+  }, [company?.subscriptions]);
 
   if (isLoading) {
     return (
@@ -69,7 +86,17 @@ const CompanyDetailPage = () => {
   const subscription = company.subscriptions?.[0];
 
   const handleStatusChange = (status: string) => {
-    updateStatus.mutate({ id: company.id, status });
+    if (status === "SUSPENDED" || status === "DEACTIVATED") {
+      setConfirmStatus(status);
+    } else {
+      updateStatus.mutate({ id: company.id, status });
+    }
+  };
+
+  const confirmStatusAction = () => {
+    if (!confirmStatus) return;
+    updateStatus.mutate({ id: company.id, status: confirmStatus });
+    setConfirmStatus(null);
   };
 
   const handlePlanOverride = () => {
@@ -81,7 +108,7 @@ const CompanyDetailPage = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+        <Button variant="ghost" size="icon" onClick={() => navigate("/super-admin/companies")}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div className="flex-1">
@@ -111,6 +138,18 @@ const CompanyDetailPage = () => {
               <span className="text-muted-foreground">Domain</span>
               <span className="font-medium">{company.domain || "—"}</span>
             </div>
+            {company.owner && (
+              <>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Owner</span>
+                  <span className="font-medium">{company.owner.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Owner Email</span>
+                  <span className="font-medium text-xs">{company.owner.email}</span>
+                </div>
+              </>
+            )}
           </div>
         </Card>
 
@@ -168,6 +207,72 @@ const CompanyDetailPage = () => {
           </div>
         </Card>
       </div>
+
+      {/* Owner & Company Details */}
+      {(company.owner?.designation || company.industry || company.website) && (
+        <Card className="p-5 rounded-2xl border border-border/50 shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <Users className="h-5 w-5 text-teal-600" />
+            <h3 className="font-semibold">Owner & Company Details</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+            {company.owner?.designation && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Designation</span>
+                <span className="font-medium">{company.owner.designation}</span>
+              </div>
+            )}
+            {company.owner?.phone && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Phone</span>
+                <span className="font-medium">{company.owner.phone}</span>
+              </div>
+            )}
+            {company.industry && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Industry</span>
+                <span className="font-medium">{company.industry}</span>
+              </div>
+            )}
+            {company.teamSize && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Team Size</span>
+                <span className="font-medium">{company.teamSize}</span>
+              </div>
+            )}
+            {company.website && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Website</span>
+                <span className="font-medium text-xs">{company.website}</span>
+              </div>
+            )}
+            {company.companyAddress && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Address</span>
+                <span className="font-medium text-xs">{company.companyAddress}</span>
+              </div>
+            )}
+            {company.timezone && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Timezone</span>
+                <span className="font-medium">{company.timezone}</span>
+              </div>
+            )}
+            {company.workingHours && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Working Hours</span>
+                <span className="font-medium">{company.workingHours}</span>
+              </div>
+            )}
+            {company.description && (
+              <div className="md:col-span-2 flex flex-col gap-1">
+                <span className="text-muted-foreground">Description</span>
+                <span className="font-medium">{company.description}</span>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
 
       {/* Subscription & Status */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -307,6 +412,31 @@ const CompanyDetailPage = () => {
           </div>
         </Card>
       </div>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={!!confirmStatus} onOpenChange={(open) => { if (!open) setConfirmStatus(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirmStatus === "SUSPENDED" ? "Suspend" : "Deactivate"} {company.name}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmStatus === "SUSPENDED"
+                ? "The company will lose access to the platform until reactivated."
+                : "This will archive the company and all its data."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmStatusAction}
+              className={confirmStatus === "DEACTIVATED" ? "bg-red-600 hover:bg-red-700" : "bg-amber-500 hover:bg-amber-600"}
+            >
+              {confirmStatus === "SUSPENDED" ? "Suspend" : "Deactivate"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

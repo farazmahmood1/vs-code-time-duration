@@ -1,8 +1,17 @@
-import { useAdminPlans, useSeedPlans, type Plan } from "@/hooks/useSuperAdmin";
+import { useAdminPlans, useSeedPlans, useUpdatePlan, type Plan } from "@/hooks/useSuperAdmin";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -19,7 +28,9 @@ import {
   Database,
   Users,
   Crown,
+  Pencil,
 } from "lucide-react";
+import { useState } from "react";
 
 const planIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   free: Zap,
@@ -31,6 +42,19 @@ const planIcons: Record<string, React.ComponentType<{ className?: string }>> = {
 const PlansPage = () => {
   const { data: plans, isLoading } = useAdminPlans();
   const seedPlans = useSeedPlans();
+  const updatePlan = useUpdatePlan();
+  const [editPlan, setEditPlan] = useState<Plan | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", price: 0, yearlyPrice: 0, maxUsers: 0, isActive: true });
+
+  const openEditDialog = (plan: Plan) => {
+    setEditPlan(plan);
+    setEditForm({ name: plan.name, price: plan.price, yearlyPrice: plan.yearlyPrice, maxUsers: plan.maxUsers, isActive: plan.isActive });
+  };
+
+  const handleSavePlan = () => {
+    if (!editPlan) return;
+    updatePlan.mutate({ id: editPlan.id, ...editForm }, { onSuccess: () => setEditPlan(null) });
+  };
 
   if (isLoading) {
     return (
@@ -165,11 +189,14 @@ const PlansPage = () => {
                   </div>
                 </div>
 
-                <div className="mt-3 pt-3 border-t">
+                <div className="mt-3 pt-3 border-t flex items-center justify-between">
                   <p className="text-xs text-muted-foreground">
                     {plan.features.filter((f) => f.enabled).length} of{" "}
                     {plan.features.length} features enabled
                   </p>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(plan)}>
+                    <Pencil className="h-3.5 w-3.5" />
+                  </Button>
                 </div>
               </Card>
             );
@@ -233,6 +260,42 @@ const PlansPage = () => {
           </div>
         </Card>
       )}
+
+      {/* Edit Plan Dialog */}
+      <Dialog open={!!editPlan} onOpenChange={(open) => { if (!open) setEditPlan(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Plan: {editPlan?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div>
+              <Label>Plan Name</Label>
+              <Input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Monthly Price ($)</Label>
+                <Input type="number" min={0} value={editForm.price} onChange={(e) => setEditForm({ ...editForm, price: parseFloat(e.target.value) || 0 })} />
+              </div>
+              <div>
+                <Label>Yearly Price ($)</Label>
+                <Input type="number" min={0} value={editForm.yearlyPrice} onChange={(e) => setEditForm({ ...editForm, yearlyPrice: parseFloat(e.target.value) || 0 })} />
+              </div>
+            </div>
+            <div>
+              <Label>Max Users (-1 for unlimited)</Label>
+              <Input type="number" min={-1} value={editForm.maxUsers} onChange={(e) => setEditForm({ ...editForm, maxUsers: parseInt(e.target.value) || 0 })} />
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch checked={editForm.isActive} onCheckedChange={(v) => setEditForm({ ...editForm, isActive: v })} />
+              <Label>Active</Label>
+            </div>
+            <Button onClick={handleSavePlan} disabled={!editForm.name.trim() || updatePlan.isPending} className="w-full bg-indigo-600 hover:bg-indigo-700">
+              {updatePlan.isPending ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

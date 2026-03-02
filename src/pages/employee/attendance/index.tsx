@@ -1,4 +1,6 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -10,9 +12,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMyDeviations } from "@/hooks/useDeviations";
 import { useMyRegularizations } from "@/hooks/useRegularization";
+import { useActiveSession, useCheckIn, useCheckOut, useMyAttendanceHistory } from "@/hooks/useTimer";
 import RegularizationForm from "@/components/attendance/RegularizationForm";
 import { format } from "date-fns";
-import { CalendarCheck, Loader2 } from "lucide-react";
+import { CalendarCheck, Loader2, Play, Square } from "lucide-react";
 import { useState } from "react";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -28,9 +31,16 @@ const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | 
 };
 
 export default function EmployeeAttendance() {
-  const [activeTab, setActiveTab] = useState("deviations");
+  const [activeTab, setActiveTab] = useState("history");
   const { data: deviationsData, isLoading: deviationsLoading } = useMyDeviations({});
   const { data: regularizationsData, isLoading: regularizationsLoading } = useMyRegularizations({});
+  const { data: historyData, isLoading: historyLoading } = useMyAttendanceHistory({ limit: 30 });
+  const { data: activeSessionData } = useActiveSession();
+  const checkInMutation = useCheckIn();
+  const checkOutMutation = useCheckOut();
+
+  const isCheckedIn = !!activeSessionData?.timer?.isActive;
+  const timesheets = historyData?.data || [];
 
   const deviations = deviationsData?.data || [];
   const regularizations = regularizationsData?.data || [];
@@ -41,14 +51,47 @@ export default function EmployeeAttendance() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">My Attendance</h1>
           <p className="text-muted-foreground">
-            View your attendance deviations and submit regularization requests
+            View your attendance history, deviations, and submit regularization requests
           </p>
         </div>
-        <RegularizationForm />
+        <div className="flex gap-2">
+          {isCheckedIn ? (
+            <Button
+              variant="destructive"
+              onClick={() => checkOutMutation.mutate()}
+              disabled={checkOutMutation.isPending}
+              className="gap-2"
+            >
+              {checkOutMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Square className="h-4 w-4" />
+              )}
+              Check Out
+            </Button>
+          ) : (
+            <Button
+              onClick={() => checkInMutation.mutate()}
+              disabled={checkInMutation.isPending}
+              className="gap-2 bg-emerald-600 hover:bg-emerald-700"
+            >
+              {checkInMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
+              Check In
+            </Button>
+          )}
+          <RegularizationForm />
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
+          <TabsTrigger value="history">
+            Attendance History
+          </TabsTrigger>
           <TabsTrigger value="deviations">
             Late / Early
             {deviations.length > 0 && (
@@ -66,6 +109,66 @@ export default function EmployeeAttendance() {
             )}
           </TabsTrigger>
         </TabsList>
+
+        {/* Attendance History Tab */}
+        <TabsContent value="history" className="mt-4">
+          {historyLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : timesheets.length === 0 ? (
+            <div className="rounded-lg border bg-card p-8 text-center">
+              <CalendarCheck className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+              <h3 className="font-semibold">No attendance records</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Your attendance history will appear here once you start checking in.
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Check In</TableHead>
+                    <TableHead>Check Out</TableHead>
+                    <TableHead>Total Hours</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {timesheets.map((ts: { id: string; workDate: string; checkInTime: string | null; checkOutTime: string | null; totalHours: number | null; status?: string }) => (
+                    <TableRow key={ts.id}>
+                      <TableCell>
+                        {format(new Date(ts.workDate), "MMM dd, yyyy (EEE)")}
+                      </TableCell>
+                      <TableCell>
+                        {ts.checkInTime
+                          ? format(new Date(ts.checkInTime), "hh:mm a")
+                          : "—"}
+                      </TableCell>
+                      <TableCell>
+                        {ts.checkOutTime
+                          ? format(new Date(ts.checkOutTime), "hh:mm a")
+                          : "—"}
+                      </TableCell>
+                      <TableCell>
+                        {ts.totalHours != null
+                          ? `${Number(ts.totalHours).toFixed(1)}h`
+                          : "—"}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={ts.checkOutTime ? "default" : ts.checkInTime ? "secondary" : "outline"}>
+                          {ts.checkOutTime ? "Complete" : ts.checkInTime ? "In Progress" : "No Record"}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </TabsContent>
 
         {/* Deviations Tab */}
         <TabsContent value="deviations" className="mt-4">

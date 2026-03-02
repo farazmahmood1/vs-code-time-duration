@@ -281,7 +281,7 @@ export const ApplyLeaveDialog = ({
         <div>
           <label className="text-sm font-medium flex items-center gap-2 mb-2">
             <span>Medical Prescription</span>
-            <span className="text-red-500">*</span>
+            {isSickLeave && <span className="text-red-500">*</span>}
           </label>
           <div className="space-y-3">
             {prescriptionFile ? (

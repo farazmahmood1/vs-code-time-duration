@@ -11,7 +11,9 @@ import AuthLayout from "./layout/auth-layout";
 import PublicLayout from "./layout/public-layout";
 import SuperAdminLayout from "./layout/super-admin-layout";
 import { OnboardingGuard } from "./layout/OnboardingGuard";
+import { OwnerOnboardingGuard } from "./layout/OwnerOnboardingGuard";
 import { PasswordChangeGuard } from "./layout/PasswordChangeGuard";
+import { CompanySetupGuard } from "./layout/CompanySetupGuard";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
 // Admin Page
@@ -83,6 +85,7 @@ import IntegrationsPage from "./pages/integrations";
 import Loading from "./pages/Loading";
 import NotFound from "./pages/NotFound";
 import OnboardingPage from "./pages/onboarding";
+import CompanySetupPage from "./pages/setup";
 import Profile from "./pages/profile";
 import HomePage from "./pages/public/HomePage";
 import FeaturesPage from "./pages/public/FeaturesPage";
@@ -147,6 +150,16 @@ const App = () => {
               }
             />
 
+            {/* Company Setup - Requires Auth but no layout */}
+            <Route
+              path="/setup"
+              element={
+                <ProtectedRoute>
+                  <CompanySetupPage />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Dashboard Routes (Protected) */}
             <Route
               path="/app"
@@ -156,13 +169,13 @@ const App = () => {
                     <Navigate to="/super-admin" replace />
                   ) : (
                     <PasswordChangeGuard>
-                      {isEmployee ? (
+                      <CompanySetupGuard>
                         <OnboardingGuard>
-                          <AppLayout />
+                          <OwnerOnboardingGuard>
+                            <AppLayout />
+                          </OwnerOnboardingGuard>
                         </OnboardingGuard>
-                      ) : (
-                        <AppLayout />
-                      )}
+                      </CompanySetupGuard>
                     </PasswordChangeGuard>
                   )}
                 </ProtectedRoute>

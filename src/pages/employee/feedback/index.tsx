@@ -38,12 +38,12 @@ export default function EmployeeFeedback() {
             <div className="space-y-3">
               <div><Label>Category</Label><Select value={form.category} onValueChange={v => setForm(p => ({ ...p, category: v }))}><SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger><SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c}>{c.replace(/_/g, " ")}</SelectItem>)}</SelectContent></Select></div>
               <div><Label>Title</Label><Input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} /></div>
-              <div><Label>Message</Label><Textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={3} /></div>
+              <div><Label>Message <span className="text-xs text-muted-foreground">(min 10 characters)</span></Label><Textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={3} placeholder="Describe your feedback in detail..." /></div>
               <div className="flex items-center gap-2"><Switch checked={form.isAnonymous} onCheckedChange={v => setForm(p => ({ ...p, isAnonymous: v }))} /><Label>Submit anonymously</Label></div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button onClick={handleSubmit} disabled={!form.category || !form.title || !form.message || submitMutation.isPending}>
+              <Button onClick={handleSubmit} disabled={!form.category || !form.title.trim() || form.message.trim().length < 10 || submitMutation.isPending}>
                 {submitMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}Submit
               </Button>
             </DialogFooter>

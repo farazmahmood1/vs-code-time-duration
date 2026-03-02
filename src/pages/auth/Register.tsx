@@ -13,9 +13,9 @@ import { signUp } from "@/lib/auth-client";
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { usePageMetadata } from "@/hooks/usePageMetadata";
@@ -25,7 +25,16 @@ const Register = () => {
     title: "Register | Forrof Tracker",
     description: "Create your Forrof Tracker account to start tracking time and managing productivity.",
   });
+  const [searchParams] = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
+
+  // Save selected plan from pricing page to localStorage
+  useEffect(() => {
+    const planSlug = searchParams.get("plan");
+    if (planSlug) {
+      localStorage.setItem("forrof_selected_plan", planSlug);
+    }
+  }, [searchParams]);
 
   const { loading, setLoading, setError, setSuccess, resetState } =
     useAuthState();

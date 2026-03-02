@@ -10,8 +10,8 @@ export const leaveFormSchema = z.object({
     message: "Please select a leave type",
   }),
 
-  startDate: z.coerce.date(),
-  endDate: z.coerce.date(),
+  startDate: z.coerce.date({ message: "Please select a start date" }),
+  endDate: z.coerce.date({ message: "Please select an end date" }),
 
   reason: z
     .string({

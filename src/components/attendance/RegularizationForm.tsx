@@ -47,8 +47,8 @@ export default function RegularizationForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Combine date + time into ISO datetime
-    const requestedDateTime = new Date(`${date}T${requestedTime}`).toISOString();
+    // Send date + time as-is (local time) to avoid timezone offset
+    const requestedDateTime = `${date}T${requestedTime}:00`;
 
     submitMutation.mutate(
       {

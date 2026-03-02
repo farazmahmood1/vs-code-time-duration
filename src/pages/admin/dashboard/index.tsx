@@ -55,7 +55,7 @@ const Dashboard = () => {
       value: data?.stats.activeEmployees || 0,
       icon: Users,
       color: "green" as const,
-      subtitle: "Checked in today",
+      subtitle: "Total active",
     },
     {
       title: "Inactive Employees",

@@ -20,6 +20,20 @@ export interface Company {
   subscriptions?: Subscription[];
   featureOverrides?: FeatureOverride[];
   _count?: { users: number; departments?: number; projects?: number };
+  description?: string | null;
+  industry?: string | null;
+  teamSize?: string | null;
+  website?: string | null;
+  companyAddress?: string | null;
+  timezone?: string | null;
+  workingHours?: string | null;
+  owner?: {
+    id: string;
+    name: string;
+    email: string;
+    phone?: string | null;
+    designation?: string | null;
+  } | null;
 }
 
 export interface Plan {
@@ -128,15 +142,20 @@ export const useCompany = (id: string | null) =>
 export const useCreateCompany = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: Partial<Company>) => {
-      const res = await api.post("/super-admin/companies", data);
-      return res.data.data;
+    mutationFn: async (formData: FormData) => {
+      const res = await api.post("/super-admin/companies", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ["super-admin", "companies"] });
-      toast.success("Company created");
+      toast.success("Company created successfully");
+      if (data.warning) {
+        toast.warning(data.warning);
+      }
     },
-    onError: () => toast.error("Failed to create company"),
+    // Global interceptor handles error toasts
   });
 };
 
@@ -147,11 +166,15 @@ export const useUpdateCompanyStatus = () => {
       const res = await api.patch(`/super-admin/companies/${id}/status`, { status });
       return res.data.data;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      // Immediately update the cached company detail so the badge reflects instantly
+      qc.setQueryData<Company>(["super-admin", "companies", variables.id], (old) =>
+        old ? { ...old, status: variables.status as Company["status"] } : old
+      );
       qc.invalidateQueries({ queryKey: ["super-admin", "companies"] });
       toast.success("Company status updated");
     },
-    onError: () => toast.error("Failed to update status"),
+    // Global interceptor handles error toasts
   });
 };
 
@@ -184,7 +207,7 @@ export const useOverrideSubscription = () => {
       qc.invalidateQueries({ queryKey: ["super-admin"] });
       toast.success("Subscription updated");
     },
-    onError: () => toast.error("Failed to update subscription"),
+    // Global interceptor handles error toasts
   });
 };
 
@@ -207,6 +230,20 @@ export const useSeedPlans = () => {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["super-admin", "plans"] });
       toast.success("Default plans seeded");
+    },
+  });
+};
+
+export const useUpdatePlan = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...data }: { id: string; name?: string; price?: number; yearlyPrice?: number; maxUsers?: number; maxStorage?: number; apiAccess?: boolean; supportLevel?: string; isActive?: boolean }) => {
+      const res = await api.put(`/super-admin/plans/${id}`, data);
+      return res.data.data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["super-admin", "plans"] });
+      toast.success("Plan updated");
     },
   });
 };

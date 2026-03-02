@@ -186,7 +186,7 @@ export default function EmployeeTimesheets() {
                     {weekData?.submission?.entries.map((entry) => (
                       <TableRow key={entry.id}>
                         <TableCell className="font-medium">
-                          {format(new Date(entry.date), "EEE, MMM dd")}
+                          {format(new Date(entry.date + "T00:00:00"), "EEE, MMM dd")}
                         </TableCell>
                         <TableCell>{entry.project?.name || "—"}</TableCell>
                         <TableCell>{entry.hours}h</TableCell>

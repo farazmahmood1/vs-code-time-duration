@@ -64,3 +64,28 @@ export const useInvoices = () =>
       return res.data.data;
     },
   });
+
+export interface SetupCompanyInput {
+  companyName: string;
+  domain?: string;
+  planSlug: string;
+  billingCycle: "MONTHLY" | "YEARLY";
+}
+
+export interface SetupCompanyResponse {
+  company: { id: string; name: string; slug: string };
+  subscription: Subscription | null;
+  checkoutUrl: string | null;
+}
+
+export const useSetupCompany = () =>
+  useMutation<SetupCompanyResponse, Error, SetupCompanyInput>({
+    mutationFn: async (data) => {
+      const res = await api.post("/billing/setup-company", data);
+      return res.data.data;
+    },
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || "Failed to set up company";
+      toast.error(message);
+    },
+  });

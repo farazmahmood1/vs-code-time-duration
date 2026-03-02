@@ -48,8 +48,12 @@ const HEATMAP_COLORS: Record<string, string> = {
 
 export default function AdminReports() {
   const [activeTab, setActiveTab] = useState("app-usage");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().split("T")[0];
+  });
+  const [endDate, setEndDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [heatmapUserId, setHeatmapUserId] = useState("");
   const [heatmapYear] = useState(new Date().getFullYear());
   const [heatmapMonth, setHeatmapMonth] = useState(new Date().getMonth() + 1);

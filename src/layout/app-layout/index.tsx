@@ -5,6 +5,7 @@ import { AppSidebar } from "./AppSidebar";
 import Header from "./Header";
 import { useSession } from "@/lib/auth-client";
 import { useSocketConnection } from "@/hooks/useSocket";
+import { CompanyProvider } from "@/contexts/CompanyContext";
 
 const AppLayout = () => {
   const { data: session, isPending } = useSession();
@@ -23,21 +24,23 @@ const AppLayout = () => {
   }
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar />
-        <main className="w-full flex flex-col min-h-screen">
-          <Header />
-          <div className="flex-1 p-4 sm:p-6 lg:p-8">
-            <Suspense
-              fallback={<p className="text-md font-medium loading-text"></p>}
-            >
-              <Outlet />
-            </Suspense>
-          </div>
-        </main>
-      </div>
-    </SidebarProvider>
+    <CompanyProvider>
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full bg-background">
+          <AppSidebar />
+          <main className="w-full flex flex-col min-h-screen">
+            <Header />
+            <div className="flex-1 p-4 sm:p-6 lg:p-8">
+              <Suspense
+                fallback={<p className="text-md font-medium loading-text"></p>}
+              >
+                <Outlet />
+              </Suspense>
+            </div>
+          </main>
+        </div>
+      </SidebarProvider>
+    </CompanyProvider>
   );
 };
 

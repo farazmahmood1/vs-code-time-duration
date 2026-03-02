@@ -46,6 +46,10 @@ export const authClient = createAuthClient({
           type: "string",
           required: false,
         },
+        companyId: {
+          type: "string",
+          required: false,
+        },
       },
     }),
     adminClient({
@@ -88,6 +92,7 @@ export type Session = {
     role?: string;
     image?: string | null;
     departmentId?: string | null;
+    companyId?: string | null;
     isPasswordChanged: boolean;
     phone?: string | null;
     address?: string | null;

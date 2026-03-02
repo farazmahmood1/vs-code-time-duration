@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import DepartmentSelect from "@/components/common/DepartmentSelect";
 import { useToast } from "@/hooks/use-toast";
-import { authClient } from "@/lib/auth-client";
+import { authClient, useSession } from "@/lib/auth-client";
 import { generateRandomPassword } from "@/lib/utils";
 import {
   employeeFormSchema,
@@ -35,6 +35,7 @@ export function AddEmployeeModal({
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
 
   const form = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeFormSchema),
@@ -49,13 +50,16 @@ export function AddEmployeeModal({
     setIsLoading(true);
     const tempPassword = generateRandomPassword(10);
     try {
+      const companyId = (session?.user as Record<string, unknown>)?.companyId as string | undefined;
+
       await authClient.admin.createUser(
         {
           name: data.name,
           email: data.email,
           password: tempPassword,
           data: {
-            departmentId: data.departmentId,
+            departmentId: data.departmentId || undefined,
+            companyId,
           },
         },
         {
@@ -64,6 +68,9 @@ export function AddEmployeeModal({
           },
         }
       );
+
+      // Refresh session to restore admin's session (createUser may corrupt client state)
+      await authClient.getSession();
 
       // Invalidate employees query to refetch the list
       queryClient.invalidateQueries({ queryKey: ["employees"] });

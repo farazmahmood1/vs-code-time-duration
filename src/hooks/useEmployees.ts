@@ -160,7 +160,12 @@ export const useEmployees = (
         };
       }
 
-      let employees = usersData.users.map((user: UserData) =>
+      // Filter out super_admin users - they should never appear in company employee lists
+      const filteredUsers = usersData.users.filter(
+        (user: UserData) => user.role !== "super_admin"
+      );
+
+      let employees = filteredUsers.map((user: UserData) =>
         mapUserToEmployee(user, departmentMap)
       );
 
@@ -183,8 +188,9 @@ export const useEmployees = (
         employees = employees.filter((emp) => emp.status === status);
       }
 
-      // Use the total count from server response for pagination
-      const totalCount = usersData.total || 0;
+      // Adjust total count to exclude super_admin users
+      const superAdminCount = usersData.users.length - filteredUsers.length;
+      const totalCount = (usersData.total || 0) - superAdminCount;
       const totalPages = Math.ceil(totalCount / itemsPerPage);
 
       return {

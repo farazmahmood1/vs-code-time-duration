@@ -30,7 +30,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Shield, Building2, ArrowRight } from "lucide-react";
+import { Shield, Building2, ArrowRight, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
@@ -49,6 +50,7 @@ const subStatusColors: Record<string, string> = {
 
 const SubscriptionsPage = () => {
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
   const [overrideTarget, setOverrideTarget] = useState<Subscription | null>(null);
@@ -83,7 +85,12 @@ const SubscriptionsPage = () => {
     );
   }
 
-  const subscriptions = data?.data ?? [];
+  const allSubscriptions = data?.data ?? [];
+  const subscriptions = search
+    ? allSubscriptions.filter((s: Subscription) =>
+        s.company?.name?.toLowerCase().includes(search.toLowerCase())
+      )
+    : allSubscriptions;
   const totalPages = data?.totalPages ?? 1;
 
   return (
@@ -96,8 +103,17 @@ const SubscriptionsPage = () => {
         </p>
       </div>
 
-      {/* Filter */}
+      {/* Filters */}
       <div className="flex gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            placeholder="Search by company name..."
+            className="pl-9"
+          />
+        </div>
         <Select
           value={statusFilter}
           onValueChange={(v) => {

@@ -36,7 +36,7 @@ export default function AdminStandups() {
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-base">{s.user?.name}</CardTitle>
-                      <span className="text-xs text-muted-foreground">{format(new Date(s.date), "MMM dd, yyyy")}</span>
+                      <span className="text-xs text-muted-foreground">{format(new Date(s.date + "T00:00:00"), "MMM dd, yyyy")}</span>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">

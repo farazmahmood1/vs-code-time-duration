@@ -16,7 +16,9 @@ import {
   useEmployeeDashboardStats,
   useWeeklyHours,
 } from "@/hooks/useEmployeeDashboardStats";
-import { CheckCircle, Clock, LogIn, LogOut } from "lucide-react";
+import { useActiveSession, useCheckIn, useCheckOut } from "@/hooks/useTimer";
+import { Button } from "@/components/ui/button";
+import { CheckCircle, Clock, LogIn, LogOut, Play, Square, Loader2 } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -42,6 +44,11 @@ export default function EmployeeDashboard() {
   const { data: dashboardStats, isLoading: isLoadingStats } =
     useEmployeeDashboardStats();
   const { data: weeklyHoursData } = useWeeklyHours();
+  const { data: activeSessionData } = useActiveSession();
+  const checkIn = useCheckIn();
+  const checkOut = useCheckOut();
+
+  const isCheckedIn = !!activeSessionData?.timer?.isActive;
 
   const announcementsList = announcements?.announcements || [];
   const stats = dashboardStats || {
@@ -189,6 +196,52 @@ export default function EmployeeDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Check-In / Check-Out Action */}
+      <Card className="border-2 border-dashed border-primary/30">
+        <CardContent className="flex items-center justify-between py-4">
+          <div>
+            <h3 className="font-semibold text-lg">
+              {isCheckedIn ? "You're checked in" : "Ready to start your day?"}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {isCheckedIn
+                ? "Click Check Out when you're done for the day."
+                : "Click Check In to start tracking your time."}
+            </p>
+          </div>
+          {isCheckedIn ? (
+            <Button
+              size="lg"
+              variant="destructive"
+              onClick={() => checkOut.mutate()}
+              disabled={checkOut.isPending}
+              className="gap-2 min-w-[140px]"
+            >
+              {checkOut.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Square className="h-4 w-4" />
+              )}
+              Check Out
+            </Button>
+          ) : (
+            <Button
+              size="lg"
+              onClick={() => checkIn.mutate()}
+              disabled={checkIn.isPending}
+              className="gap-2 min-w-[140px] bg-emerald-600 hover:bg-emerald-700"
+            >
+              {checkIn.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
+              Check In
+            </Button>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Bottom Section: Weekly Hours + Announcements */}
       <div className="flex flex-col md:flex-row gap-6">

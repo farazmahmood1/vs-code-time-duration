@@ -99,7 +99,7 @@ export const SalaryEditDialog = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="salary">Salary (PKR)</Label>
+          <Label htmlFor="salary">Salary (USD)</Label>
           <Input
             id="salary"
             type="number"

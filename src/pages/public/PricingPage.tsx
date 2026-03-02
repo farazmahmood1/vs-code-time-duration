@@ -8,6 +8,7 @@ import type { Plan } from "@/hooks/useSuperAdmin";
 const fallbackPlans = [
   {
     name: "Free",
+    slug: "free",
     price: "Free",
     desc: "For small teams getting started. Up to 5 users.",
     features: [
@@ -19,6 +20,7 @@ const fallbackPlans = [
   },
   {
     name: "Pro",
+    slug: "pro",
     price: "$8",
     desc: "For growing teams. Up to 50 users.",
     features: [
@@ -31,6 +33,7 @@ const fallbackPlans = [
   },
   {
     name: "Business",
+    slug: "business",
     price: "$16",
     popular: true,
     desc: "Full platform for scaling organizations. Up to 500 users.",
@@ -45,6 +48,7 @@ const fallbackPlans = [
   },
   {
     name: "Enterprise",
+    slug: "enterprise",
     price: "Custom",
     desc: "Custom solutions for large enterprises.",
     features: [
@@ -139,7 +143,7 @@ const PricingPage: React.FC = () => {
             ))}
           </div>
           <Link
-            to="/register"
+            to={plan.isCustom ? "/about" : `/register?plan=${plan.slug}`}
             className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] transition-all text-center ${
               isPopular
                 ? "bg-white text-[#1e293b] hover:shadow-xl"
@@ -261,7 +265,7 @@ const PricingPage: React.FC = () => {
                       ))}
                     </div>
                     <Link
-                      to={tier.price === "Custom" ? "/about" : "/register"}
+                      to={tier.price === "Custom" ? "/about" : `/register?plan=${tier.slug}`}
                       className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] transition-all text-center ${
                         tier.popular
                           ? "bg-white text-[#1e293b] hover:shadow-xl"

@@ -59,7 +59,7 @@ export const EfficiencyWidget = ({ weeklyHours }: EfficiencyWidgetProps) => {
       {/* Value */}
       <div className="flex items-baseline gap-1 mb-1">
         <span className="text-3xl font-bold text-foreground">
-          {efficiency !== null ? `+${efficiency}%` : "—"}
+          {efficiency !== null ? `${efficiency}%` : "—"}
         </span>
       </div>
       <p className="text-xs text-muted-foreground mb-3">vs last week</p>

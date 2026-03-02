@@ -1,12 +1,21 @@
 import { useSession } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Shield, Mail, User, Key } from "lucide-react";
+import { Shield, Mail, User, Key, Pencil, Check, X } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const SuperAdminSettings = () => {
   const { data: session } = useSession();
   const user = session?.user;
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const initials = user?.name
     ? user.name
@@ -16,6 +25,30 @@ const SuperAdminSettings = () => {
         .toUpperCase()
         .slice(0, 2)
     : "SA";
+
+  const startEditing = () => {
+    setName(user?.name || "");
+    setEditing(true);
+  };
+
+  const cancelEditing = () => {
+    setEditing(false);
+    setName("");
+  };
+
+  const saveName = async () => {
+    if (!name.trim()) return;
+    setSaving(true);
+    try {
+      await authClient.updateUser({ name: name.trim() });
+      toast.success("Name updated successfully");
+      setEditing(false);
+    } catch {
+      toast.error("Failed to update name");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -48,9 +81,31 @@ const SuperAdminSettings = () => {
         <div className="space-y-4">
           <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
             <User className="h-4 w-4 text-muted-foreground" />
-            <div>
+            <div className="flex-1">
               <p className="text-xs text-muted-foreground">Name</p>
-              <p className="text-sm font-medium">{user?.name}</p>
+              {editing ? (
+                <div className="flex items-center gap-2 mt-1">
+                  <Input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="h-8 text-sm"
+                    autoFocus
+                  />
+                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={saveName} disabled={saving || !name.trim()}>
+                    <Check className="h-4 w-4 text-green-600" />
+                  </Button>
+                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={cancelEditing}>
+                    <X className="h-4 w-4 text-red-600" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium">{user?.name}</p>
+                  <Button size="icon" variant="ghost" className="h-6 w-6" onClick={startEditing}>
+                    <Pencil className="h-3 w-3 text-muted-foreground" />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">

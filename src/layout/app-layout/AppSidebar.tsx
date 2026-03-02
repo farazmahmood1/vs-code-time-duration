@@ -14,6 +14,7 @@ import { LogOut, User } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
+import { useCompanyContext } from "@/contexts/CompanyContext";
 import {
   LayoutDashboard,
   BarChart3,
@@ -57,6 +58,7 @@ export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: session } = useSession();
+  const { company } = useCompanyContext();
 
   const MENU_ITEMS: MenuItem[] = [
     {
@@ -279,11 +281,11 @@ export function AppSidebar() {
         <div className="px-4 py-5 border-b border-sidebar-border">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <img src="/imgs/logo.png" alt="Logo" className="w-6 h-6" />
+              <img src={company?.logo || "/imgs/logo.png"} alt="Logo" className="w-6 h-6 rounded" />
             </div>
             {open && (
               <span className="font-bold text-xl tracking-tight text-foreground">
-                Forrof
+                {company?.name || "Forrof"}
               </span>
             )}
           </div>
