@@ -2,7 +2,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   useCompany,
   useUpdateCompanyStatus,
-  useSetFeatureOverride,
   useOverrideSubscription,
   useAdminPlans,
 } from "@/hooks/useSuperAdmin";
@@ -54,7 +53,6 @@ const CompanyDetailPage = () => {
   const { data: plans } = useAdminPlans();
   const updateStatus = useUpdateCompanyStatus();
   const overrideSub = useOverrideSubscription();
-  const setFeature = useSetFeatureOverride();
   const [selectedPlan, setSelectedPlan] = useState<string>("");
   const [confirmStatus, setConfirmStatus] = useState<string | null>(null);
 

@@ -18,7 +18,7 @@ export const employeeFormSchema = z.object({
     .email({
       message: "Please enter a valid email address",
     }),
-  departmentId: z.string().optional().default(""),
+  departmentId: z.string().default(""),
 });
 
 export type EmployeeFormData = z.infer<typeof employeeFormSchema>;

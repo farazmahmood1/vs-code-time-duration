@@ -228,7 +228,7 @@ export default function EmployeeDashboard() {
           ) : (
             <Button
               size="lg"
-              onClick={() => checkIn.mutate()}
+              onClick={() => checkIn.mutate(undefined)}
               disabled={checkIn.isPending}
               className="gap-2 min-w-[140px] bg-emerald-600 hover:bg-emerald-700"
             >

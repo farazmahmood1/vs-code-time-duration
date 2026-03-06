@@ -22,7 +22,7 @@ export function OwnerOnboardingPage({ onCompleted }: OwnerOnboardingPageProps) {
   const { mutate: completeOnboarding, isPending: isCompleting } =
     useCompleteOwnerOnboarding();
   const [activeTab, setActiveTab] = useState("profile");
-  const [isCurrentTabValid, setIsCurrentTabValid] = useState(false);
+  const [, setIsCurrentTabValid] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
 
