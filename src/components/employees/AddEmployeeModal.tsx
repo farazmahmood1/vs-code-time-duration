@@ -38,7 +38,7 @@ export function AddEmployeeModal({
   const { data: session } = useSession();
 
   const form = useForm<EmployeeFormData>({
-    resolver: zodResolver(employeeFormSchema),
+    resolver: zodResolver(employeeFormSchema) as never,
     defaultValues: {
       name: "",
       email: "",
