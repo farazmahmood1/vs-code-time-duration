@@ -1,7 +1,7 @@
 import { authClient } from "@/lib/auth-client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import api from "@/lib/axios";
+import api from "@/lib/api";
 import { useState } from "react";
 
 export interface Employee {
@@ -31,23 +31,6 @@ const getInitials = (name: string): string => {
     .slice(0, 2);
 };
 
-// Fetch all departments and create a lookup map
-const fetchDepartmentMap = async (): Promise<Map<string, string>> => {
-  try {
-    const response = await api.get("/departments?limit=1000");
-    const departmentMap = new Map<string, string>();
-
-    response.data.data?.forEach((dept: { id: string; name: string }) => {
-      departmentMap.set(dept.id, dept.name);
-    });
-
-    return departmentMap;
-  } catch (error) {
-    console.error("Failed to fetch departments", error);
-    return new Map();
-  }
-};
-
 interface UserData {
   id: string;
   uniqueId?: string;
@@ -55,7 +38,7 @@ interface UserData {
   email: string;
   image?: string | null;
   role?: string;
-  department?: string;
+  department?: { id: string; name: string } | null;
   departmentId?: string;
   createdAt: Date | string;
   salary?: number;
@@ -63,42 +46,6 @@ interface UserData {
   linkedinUrl?: string;
   banned?: boolean | null;
 }
-
-const mapUserToEmployee = (
-  user: UserData,
-  departmentMap: Map<string, string>
-): Employee => {
-  // Get department name from departmentId using the map, fallback to department field, then "Unassigned"
-  let departmentName = "Unassigned";
-  if (user.departmentId && departmentMap.has(user.departmentId)) {
-    departmentName = departmentMap.get(user.departmentId)!;
-  } else if (
-    user.department &&
-    user.department !== "-" &&
-    user.department !== "Unassigned"
-  ) {
-    departmentName = user.department;
-  }
-
-  return {
-    id: user.id,
-    uniqueId: user.uniqueId,
-    name: user.name || "Unknown",
-    email: user.email,
-    role: user.role || "employee",
-    department: departmentName,
-    departmentId: user.departmentId,
-    dateJoined: formatDistanceToNow(new Date(user.createdAt), {
-      addSuffix: true,
-    }),
-    salary: user.salary,
-    status: "Offline",
-    avatar: user.image || getInitials(user.name || ""),
-    githubUrl: user.githubUrl,
-    linkedinUrl: user.linkedinUrl,
-    banned: user.banned,
-  };
-};
 
 export const useEmployees = (
   page: number,
@@ -113,91 +60,42 @@ export const useEmployees = (
     queryFn: async () => {
       const itemsPerPage = 8;
 
-      const offset = (page - 1) * itemsPerPage;
-
-      const queryObj: Record<string, string | number> = {
+      const params: Record<string, string | number> = {
+        page,
         limit: itemsPerPage,
-        offset: offset,
         sortBy: "createdAt",
         sortDirection: "desc",
       };
 
-      if (search) {
-        queryObj.searchValue = search;
-        queryObj.searchField = "name";
-        queryObj.searchOperator = "contains";
+      if (search) params.search = search;
+      if (department) params.departmentId = department;
+      if (role) params.role = role;
+
+      const res = await api.get("/employees", { params });
+      const { users, total, totalPages } = res.data;
+
+      if (!users || users.length === 0) {
+        return { employees: [], totalPages: 0, total: 0 };
       }
 
-      if (department) {
-        queryObj.filterField = "departmentId";
-        queryObj.filterValue = department;
-        queryObj.filterOperator = "eq";
-      }
+      const employees: Employee[] = users.map((user: UserData & { department?: { id: string; name: string } | null }) => ({
+        id: user.id,
+        uniqueId: user.uniqueId,
+        name: user.name || "Unknown",
+        email: user.email,
+        role: user.role || "employee",
+        department: user.department?.name || "Unassigned",
+        departmentId: user.departmentId,
+        dateJoined: formatDistanceToNow(new Date(user.createdAt), { addSuffix: true }),
+        salary: user.salary,
+        status: "Offline" as const,
+        avatar: user.image || getInitials(user.name || ""),
+        githubUrl: user.githubUrl,
+        linkedinUrl: user.linkedinUrl,
+        banned: user.banned,
+      }));
 
-      if (role) {
-        queryObj.filterField = "role";
-        queryObj.filterValue = role;
-        queryObj.filterOperator = "eq";
-      }
-
-      // Fetch departments first to build the lookup map
-      const departmentMap = await fetchDepartmentMap();
-
-      const { data: usersData, error } = await authClient.admin.listUsers({
-        query: queryObj,
-      });
-      console.log("Users Data:", usersData, "Error:", error);
-
-      if (error) {
-        throw new Error("Failed to fetch employees");
-      }
-
-      if (!usersData || !usersData.users) {
-        return {
-          employees: [],
-          totalPages: 0,
-          total: 0,
-        };
-      }
-
-      // Filter out super_admin users - they should never appear in company employee lists
-      const filteredUsers = usersData.users.filter(
-        (user: UserData) => user.role !== "super_admin"
-      );
-
-      let employees = filteredUsers.map((user: UserData) =>
-        mapUserToEmployee(user, departmentMap)
-      );
-
-      if (search) {
-        const searchLower = search.toLowerCase();
-        employees = employees.filter(
-          (emp) =>
-            emp.name.toLowerCase().includes(searchLower) ||
-            emp.email.toLowerCase().includes(searchLower)
-        );
-      }
-
-      // Apply role filter on client-side if department filter was used server-side
-      if (role && department) {
-        employees = employees.filter((emp) => emp.role === role);
-      }
-
-      // Apply status filter on client-side (computed field based on random state)
-      if (status) {
-        employees = employees.filter((emp) => emp.status === status);
-      }
-
-      // Adjust total count to exclude super_admin users
-      const superAdminCount = usersData.users.length - filteredUsers.length;
-      const totalCount = (usersData.total || 0) - superAdminCount;
-      const totalPages = Math.ceil(totalCount / itemsPerPage);
-
-      return {
-        employees,
-        totalPages,
-        total: totalCount,
-      };
+      return { employees, totalPages, total };
     },
   });
 };
